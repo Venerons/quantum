@@ -50,7 +50,7 @@
 		} else {
 			throw new Error('Invalid bufferToString buffer');
 		}
-		var decoder = new TextDecoder(encoding || 'utf-16');
+		var decoder = new TextDecoder(encoding || 'utf-8');
 		return decoder.decode(dataView);
 	} : String.fromCodePoint ? function (buffer) {
 		if (!(buffer instanceof Uint16Array)) {
@@ -79,13 +79,13 @@
 	/*
 	** STRING TO BUFFER
 	**
-	** Return a Uint8Array buffer representing the input string
+	** Return a Uint8Array buffer representing the input string.
 	*/
 	BlackGate.stringToBuffer = 'TextEncoder' in window ? function (string, encoding) {
 		if (typeof string !== 'string') {
 			throw new Error('Invalid stringToBuffer string');
 		}
-		var encoder = new TextEncoder(encoding || 'utf-16');
+		var encoder = new TextEncoder(encoding || 'utf-8');
 		return encoder.encode(string);
 	} : String.fromCodePoint ? function (string) {
 		if (typeof string !== 'string') {
