@@ -138,24 +138,6 @@
 	** Return a hex string representing the input buffer.
 	*/
 	BlackGate.bufferToHex = function (buffer) {
-		if (!(buffer instanceof Uint8Array)) {
-			if (buffer instanceof ArrayBuffer) {
-				buffer = new Uint8Array(buffer);
-			} else if (buffer.buffer instanceof ArrayBuffer) {
-				buffer = new Uint8Array(buffer.buffer);
-			} else {
-				throw new Error('Invalid bufferToHex buffer');
-			}
-		}
-		var output = '';
-		for (var i = 0; i < buffer.byteLength; ++i) {
-			var hex = buffer[i].toString(16);
-			output += '00'.substring(0, 2 - hex.length) + hex;
-		}
-		return output;
-	};
-
-	BlackGate.bufferToHex_2 = function (buffer) {
 		if (!(buffer instanceof ArrayBuffer)) {
 			if (buffer.buffer instanceof ArrayBuffer) {
 				buffer = buffer.buffer;
@@ -178,38 +160,6 @@
 		}
 		return output.join('');
 	};
-
-	BlackGate.bufferToHex_3 = function (buffer) {
-		if (!(buffer instanceof Uint8Array)) {
-			if (buffer instanceof ArrayBuffer) {
-				buffer = new Uint8Array(buffer);
-			} else if (buffer.buffer instanceof ArrayBuffer) {
-				buffer = new Uint8Array(buffer.buffer);
-			} else {
-				throw new Error('Invalid bufferToHex buffer');
-			}
-		}
-		var hex = '';
-		for (var i = 0; i < b.length; ++i) {
-			var zeropad = (b[i] < 0x10) ? '0' : '';
-			hex += zeropad + b[i].toString(16);
-		}
-		return hex;
-	};
-
-	/*
-	var buffer = Quantum.blackgate.randomBuffer(512);
-	[
-		{ name: 'bufferToHex',   func: Quantum.blackgate.bufferToHex,   input: buffer },
-		{ name: 'bufferToHex_2', func: Quantum.blackgate.bufferToHex_2, input: buffer.buffer },
-		{ name: 'bufferToHex_3', func: Quantum.blackgate.bufferToHex_3, input: buffer }
-	].forEach(function (item) {
-		console.time(item.name);
-		var tmp = item.func(item.input);
-		console.timeEnd(item.name);
-		console.log(item.name, tmp);
-	});
-	*/
 
 	/*
 	** HEX STRING TO BUFFER
