@@ -3,19 +3,26 @@
 # ENVIRONMENT
 #
 VERSION=$1
-echo "// Quantum ${VERSION} | Copyright © 2017 Daniele Veneroni | Released under MIT License (X11 License)" > header
-#
-# BUILD
-#
-uglifyjs quantum.js -o tmp -m -c --screw-ie8
-cat header tmp > quantum-${VERSION}.min.js
-
-uglifyjs quantum.table.js -o tmp -m -c --screw-ie8
-cat header tmp > quantum-${VERSION}.min.js
-
-uglifyjs quantum.blackgate.js -o tmp -m -c --screw-ie8
-cat header tmp > quantum-${VERSION}.min.js
+HEADER="// Quantum ${VERSION} | Copyright © 2017-$(date +'%Y') Daniele Veneroni | Released under MIT License (X11 License)"
+#HEADER="// Quantum ${VERSION} | Copyright © 2017-$(date +'%Y') Daniele Veneroni | Released under MIT License (X11 License)"
 #
 # CLEANUP
 #
-rm header tmp
+echo "Cleanup started."
+find . -type f -name *.min.js -exec rm {} \;
+find . -type f -name *.map -exec rm {} \;
+echo "Cleanup completed."
+#
+# BUILD
+#
+echo "Build started."
+for FILE in "quantum" "quantum.table" "quantum.blackgate"; do
+	uglifyjs ${FILE}.js --output ${FILE}.min.js --screw-ie8 --mangle --prefix relative --source-map ${FILE}.min.js.map --source-map-include-sources --preamble ${HEADER}
+	if ! [ $? -eq 0 ]; then
+		echo "Error while building ${FILE}.js"
+		exit 1
+	else
+		echo "Successfully builded ${FILE}.js"
+	fi
+done
+echo "Build completed."
