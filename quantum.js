@@ -13,22 +13,40 @@
 		}
 	};
 
-	/*
-	window.onerror = function (message, filename, lineno, colno, error) {
-		if (error) {
-			error.fileName = error.fileName || filename || null;
-			error.lineNumber = error.lineNumber || lineno || null;
-			error.columnNumber = error.columnNumber || colno || null;
-			Quantum.error(error, 'Uncatched Exception');
-		} else {
-			console.error(message, filename, lineno, colno, error);
+	Quantum.log = function () {
+		try {
+			var arg = Array.prototype.slice.call(arguments);
+			var level = arg.shift();
+			if (level === 'debug') {
+				arg.unshift('color: lightgreen');
+				arg.unshift('🔧 %c[Debug]');
+				console.log.apply(console, arg);
+			} else if (level === 'info') {
+				arg.unshift('color: dodgerblue');
+				arg.unshift('🔧 %c[Info]');
+				console.info.apply(console, arg);
+			} else if (level === 'warn') {
+				arg.unshift('color: orange');
+				arg.unshift('🔧 %c[Warning]');
+				console.warn.apply(console, arg);
+			} else if (level === 'error') {
+				arg.unshift('color: crimson');
+				arg.unshift('🔧 %c[Error]');
+				console.error.apply(console, arg);
+			} else {
+				arg.unshift(level);
+				console.log.apply(console, arg);
+			}
+		} catch (e) {
+			console.log(Array.prototype.slice.call(arguments));
 		}
 	};
-	*/
 
 	Quantum.error = function (error, message) {
-		console.error(
-			(message            ? 'ERROR: ' + message + '\n\n' : '') +
+		Quantum.log(
+			'error',
+			(message ? message : '') +
+			'\n\n' +
 			(error.toString()   ? 'Error:\t\t' + error.toString() : '') +
 			(error.name         ? '\nName:\t\t' + error.name : '') +
 			(error.message      ? '\nMessage:\t' + error.message : '') +
@@ -38,7 +56,25 @@
 			(error.columnNumber ? '\nColumn #:\t' + error.columnNumber : '') +
 			(error.stack        ? '\n\nStack:\n\n' + error.stack : ''));
 	};
-	
+
+	/*
+	window.onerror = function (message, filename, lineno, colno, error) {
+		if (error) {
+			error.fileName = error.fileName || filename || null;
+			error.lineNumber = error.lineNumber || lineno || null;
+			error.columnNumber = error.columnNumber || colno || null;
+		} else {
+			error = {
+				message: message,
+				fileName: filename,
+				lineNumber: lineno,
+				columnNumber: colno
+			};
+		}
+		Quantum.error(error, 'Uncatched Exception');
+	};
+	*/
+
 	Quantum.type = function (object) {
 		return Object.prototype.toString.call(object).replace(/^\[object (.+)\]$/, '$1');
 	};
