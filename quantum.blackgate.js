@@ -361,5 +361,8 @@
 		return outputBuffer;
 	};
 
+	if (!window.Quantum) {
+		window.Quantum = Object.create(null);
+	}
 	window.Quantum.blackgate = BlackGate;
 })();
