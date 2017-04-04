@@ -175,6 +175,9 @@
 		return q;
 	};
 
+	if (!window.Quantum) {
+		window.Quantum = Object.create(null);
+	}
 	window.Quantum.table = QuantumTable;
 })();
 
