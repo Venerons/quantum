@@ -12,18 +12,18 @@
 (function () {
 	'use strict';
 
-	var BlackGate = Object.create(null);
+	var Crypto = Object.create(null);
 
 	/*
 	** CHARSETS
 	*/
-	BlackGate.ALPHA_LOWER = 'abcdefghijklmnopqrstuvwxyz';
-	BlackGate.ALPHA_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	BlackGate.NUMBERS = '0123456789';
-	BlackGate.SPACE = ' ';
-	BlackGate.SYMBOLS = '-_!"#$%&\'()*+,./:;<=>?@[\\]^{|}~';
-	BlackGate.DEFAULTCHARSET = null;
-	BlackGate.DEFAULTCHARSET = BlackGate.ALPHA_LOWER.concat(BlackGate.ALPHA_UPPER).concat(BlackGate.NUMBERS).concat(BlackGate.SYMBOLS);
+	Crypto.ALPHA_LOWER = 'abcdefghijklmnopqrstuvwxyz';
+	Crypto.ALPHA_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	Crypto.NUMBERS = '0123456789';
+	Crypto.SPACE = ' ';
+	Crypto.SYMBOLS = '-_!"#$%&\'()*+,./:;<=>?@[\\]^{|}~';
+	Crypto.DEFAULTCHARSET = null;
+	Crypto.DEFAULTCHARSET = Crypto.ALPHA_LOWER.concat(Crypto.ALPHA_UPPER).concat(Crypto.NUMBERS).concat(Crypto.SYMBOLS);
 
 	/*
 	** RANDOM DATA BUFFER
@@ -32,7 +32,7 @@
 	** Useful to generate salts, random keys, etc.
 	** The maximum allowed as bytesNumber is 65536.
 	*/
-	BlackGate.randomBuffer = function (bytesNumber) {
+	Crypto.randomBuffer = function (bytesNumber) {
 		return crypto.getRandomValues(new Uint8Array(bytesNumber || 512));
 	};
 
@@ -41,7 +41,7 @@
 	**
 	** Return a string representing the input buffer.
 	*/
-	BlackGate.bufferToString = 'TextDecoder' in window ? function (buffer, encoding) {
+	Crypto.bufferToString = 'TextDecoder' in window ? function (buffer, encoding) {
 		var dataView;
 		if (buffer instanceof ArrayBuffer) {
 			dataView = new DataView(buffer);
@@ -81,7 +81,7 @@
 	**
 	** Return a Uint8Array buffer representing the input string.
 	*/
-	BlackGate.stringToBuffer = 'TextEncoder' in window ? function (string, encoding) {
+	Crypto.stringToBuffer = 'TextEncoder' in window ? function (string, encoding) {
 		if (typeof string !== 'string') {
 			throw new Error('Invalid stringToBuffer string');
 		}
@@ -116,8 +116,8 @@
 	**
 	** https://gist.github.com/jonleighton/958841
 	*/
-	BlackGate.bufferToBase64 = function (buffer) {
-		return btoa(BlackGate.bufferToString(buffer));
+	Crypto.bufferToBase64 = function (buffer) {
+		return btoa(Crypto.bufferToString(buffer));
 	};
 
 	/*
@@ -125,11 +125,11 @@
 	**
 	** Return a Uint8Array buffer representing the input base64 string.
 	*/
-	BlackGate.base64ToBuffer = function (string) {
+	Crypto.base64ToBuffer = function (string) {
 		if (typeof string !== 'string') {
 			throw new Error('Invalid base64ToBuffer string');
 		}
-		return BlackGate.stringToBuffer(atob(string));
+		return Crypto.stringToBuffer(atob(string));
 	};
 
 	/*
@@ -137,7 +137,7 @@
 	**
 	** Return a hex string representing the input buffer.
 	*/
-	BlackGate.bufferToHex = function (buffer) {
+	Crypto.bufferToHex = function (buffer) {
 		if (!(buffer instanceof ArrayBuffer)) {
 			if (buffer.buffer instanceof ArrayBuffer) {
 				buffer = buffer.buffer;
@@ -166,7 +166,7 @@
 	**
 	** Return a Uint8Array buffer representing the input hex string.
 	*/
-	BlackGate.hexToBuffer = function (string) {
+	Crypto.hexToBuffer = function (string) {
 		if (typeof string !== 'string') {
 			throw new Error('Invalid hexToBuffer string');
 		}
@@ -182,7 +182,7 @@
 	**
 	** Return a URI Encoding string representing the input buffer.
 	*/
-	BlackGate.bufferToURIEncoding = function (buffer) {
+	Crypto.bufferToURIEncoding = function (buffer) {
 		if (!(buffer instanceof Uint8Array)) {
 			if (buffer instanceof ArrayBuffer) {
 				buffer = new Uint8Array(buffer);
@@ -205,7 +205,7 @@
 	**
 	** Return a Uint8Array buffer representing the input URI Encoding string.
 	*/
-	BlackGate.URIEncodingToBuffer = function (string) {
+	Crypto.URIEncodingToBuffer = function (string) {
 		if (typeof string !== 'string') {
 			throw new Error('Invalid URIEncodingToBuffer string');
 		}
@@ -223,7 +223,7 @@
 	**
 	** Return a bit string representing the input buffer.
 	*/
-	BlackGate.bufferToBitString = function (buffer) {
+	Crypto.bufferToBitString = function (buffer) {
 		if (!(buffer instanceof Uint8Array)) {
 			if (buffer instanceof ArrayBuffer) {
 				buffer = new Uint8Array(buffer);
@@ -246,7 +246,7 @@
 	**
 	** Return a Uint8Array buffer representing the input bit string.
 	*/
-	BlackGate.bitStringToBuffer = function (string) {
+	Crypto.bitStringToBuffer = function (string) {
 		if (typeof string !== 'string') {
 			throw new Error('Invalid bitStringToBuffer string');
 		}
@@ -260,10 +260,10 @@
 	/*
 	** RANDOM PASSWORD
 	*/
-	BlackGate.randomPassword = function (passwordLength, charset) {
+	Crypto.randomPassword = function (passwordLength, charset) {
 		passwordLength = passwordLength || 16;
-		charset = charset || BlackGate.DEFAULTCHARSET;
-		var randomBytes = BlackGate.randomBuffer(passwordLength), //crypto.getRandomValues(new Uint8Array(passwordLength)),
+		charset = charset || Crypto.DEFAULTCHARSET;
+		var randomBytes = Crypto.randomBuffer(passwordLength), //crypto.getRandomValues(new Uint8Array(passwordLength)),
 			outputString = '';
 		for (var i = 0; i < randomBytes.length; ++i) {
 			outputString += charset.charAt(randomBytes[i] % charset.length);
@@ -277,20 +277,20 @@
 	** https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
 	** Supported algorithms: SHA-1, SHA-256, SHA-384, SHA-512
 	**
-	** BlackGate.hash('SHA-256', BlackGate.stringToBuffer('foobar')).then(function (bufferHash) {
-	**     var hexDigest = BlackGate.bufferToHex(bufferHash);
+	** Crypto.hash('SHA-256', Crypto.stringToBuffer('foobar')).then(function (bufferHash) {
+	**     var hexDigest = Crypto.bufferToHex(bufferHash);
 	** });
 	*/
-	BlackGate.hash = function (algo, buffer) {
+	Crypto.hash = function (algo, buffer) {
 		return crypto.subtle.digest(algo, buffer);
 	};
 
 	/*
 	** GENERATE VAULT PASSWORD
 	*/
-	BlackGate.vaultPassword = function (masterPassword, serviceID, passwordLength, charset) {
+	Crypto.vaultPassword = function (masterPassword, serviceID, passwordLength, charset) {
 		passwordLength = passwordLength || 16;
-		charset = charset || BlackGate.DEFAULTCHARSET;
+		charset = charset || Crypto.DEFAULTCHARSET;
 
 		/*
 		//console.time('vaultPassword');
@@ -308,15 +308,15 @@
 
 		//console.time('vaultPassword');
 		return Promise.all([
-			BlackGate.hash('SHA-512', BlackGate.stringToBuffer(masterPassword)),
-			BlackGate.hash('SHA-512', BlackGate.stringToBuffer(serviceID))
+			Crypto.hash('SHA-512', Crypto.stringToBuffer(masterPassword)),
+			Crypto.hash('SHA-512', Crypto.stringToBuffer(serviceID))
 		]).then(function (values) {
 			var masterHashBuffer = new Uint8Array(values[0]),
 				serviceHashBuffer = new Uint8Array(values[1]),
 				mix = new Uint8Array(masterHashBuffer.length + serviceHashBuffer.length);
 			mix.set(masterHashBuffer);
 			mix.set(serviceHashBuffer, masterHashBuffer.length);
-			return BlackGate.hash('SHA-512', mix).then(function (mixHashBuffer) {
+			return Crypto.hash('SHA-512', mix).then(function (mixHashBuffer) {
 				mixHashBuffer = new Uint8Array(mixHashBuffer);
 				var outputString = '';
 				for (var i = 0; i < passwordLength; ++i) {
@@ -335,7 +335,7 @@
 	** The xor is applied on each byte (8bit) of the input using
 	** the corresponding byte of the key (the key is circular).
 	*/
-	BlackGate.xorcipher = function(input, key) {
+	Crypto.xorcipher = function(input, key) {
 		if (!(input instanceof Uint8Array)) {
 			if (input instanceof ArrayBuffer) {
 				input = new Uint8Array(input);
@@ -364,5 +364,5 @@
 	if (!window.Quantum) {
 		window.Quantum = Object.create(null);
 	}
-	window.Quantum.blackgate = BlackGate;
+	window.Quantum.crypto = Crypto;
 })();
