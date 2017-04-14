@@ -282,7 +282,7 @@
 	** });
 	*/
 	Crypto.hash = function (algo, buffer) {
-		return crypto.subtle.digest(algo, buffer);
+		return (crypto || webkitCrypto || msCrypto).subtle.digest(algo, buffer);
 	};
 
 	/*
