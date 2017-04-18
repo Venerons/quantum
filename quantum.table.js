@@ -6,7 +6,11 @@
 		if (!(this instanceof QuantumTable)) {
 			return new QuantumTable(selector, settings);
 		} else {
-			q.selector = selector;
+			if (typeof(selector) === 'string') {
+				q.selector = selector;
+			} else {
+				q.element = selector;
+			}
 			q.settings = settings;
 			q._renderGrid();
 			return q;
@@ -152,7 +156,7 @@
 		//tfoot = document.createElement('tfoot');
 		// TODO
 
-		var element = document.querySelector(q.selector);
+		var element = q.element || document.querySelector(q.selector);
 		if (element) {
 			if (q.settings.width) {
 				element.style.width = typeof q.settings.width === 'number' ? q.settings.width + 'px' : q.settings.width;
