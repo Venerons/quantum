@@ -8,7 +8,6 @@
 		} else {
 			q.selector = selector;
 			q.settings = settings;
-			// TODO
 			q._renderGrid();
 			return q;
 		}
@@ -39,22 +38,31 @@
 		});
 
 		// THEAD
-		thead = document.createElement('thead');
-		var tr = document.createElement('tr');
+		var tr;
 		q.settings.columns.forEach(function (column) {
-			var th = document.createElement('th');
-			th.textContent = column.caption;
-			/*
-			if (column.size) {
-				th.style.width = column.size;
+			if (column.caption || column.hidden) {
+				var th = document.createElement('th');
+				if (column.caption) {
+					th.textContent = column.caption;
+				}
+				/*
+				if (column.size) {
+					th.style.width = column.size;
+				}
+				*/
+				if (column.hidden) {
+					th.hidden = true; // th.setAttribute('hidden', true);
+				}
+				if (!tr) {
+					tr = document.createElement('tr');
+				}
+				tr.appendChild(th);
 			}
-			*/
-			if (column.hidden) {
-				th.hidden = true; // th.setAttribute('hidden', true);
-			}
-			tr.appendChild(th);
 		});
-		thead.appendChild(tr);
+		if (tr) {
+			thead = document.createElement('thead');
+			thead.appendChild(tr);
+		}
 
 		// TBODY
 		tbody = document.createElement('tbody');
