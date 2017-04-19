@@ -124,7 +124,7 @@
 					td = document.createElement('td');
 				td.setAttribute('colspan', q.settings.columns.length);
 				if (q.settings.group.render) {
-					td.innerHTML = q.settings.group.render.call(q, groupID);
+					td.innerHTML = q.settings.group.render.call(q, groupID, td);
 				} else {
 					td.textContent = groupID;
 				}
@@ -140,7 +140,7 @@
 						td.dataset.value = typeof value === 'string' ? value : JSON.stringify(value);
 					} catch (e) {}
 					if (column.render) {
-						td.innerHTML = column.render.call(q, record[column.field], record);
+						td.innerHTML = column.render.call(q, record[column.field], record, td);
 					} else {
 						td.textContent = record[column.field];
 					}
