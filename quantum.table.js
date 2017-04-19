@@ -33,7 +33,7 @@
 		q.settings.columns.forEach(function (column) {
 			var col = document.createElement('col');
 			if (column.size) {
-				col.style.width = column.size;
+				col.style.width = typeof column.size === 'number' ? column.size + 'px' : column.size;
 			}
 			if (column.hidden) {
 				col.hidden = true; // th.setAttribute('hidden', true);
@@ -51,7 +51,7 @@
 				}
 				/*
 				if (column.size) {
-					th.style.width = column.size;
+					th.style.width = typeof column.size === 'number' ? column.size + 'px' : column.size;
 				}
 				*/
 				if (column.hidden) {
@@ -136,7 +136,8 @@
 				q.settings.columns.forEach(function (column) {
 					var td = document.createElement('td');
 					try {
-						td.dataset.value = record[column.field].toString();
+						var value = record[column.field];
+						td.dataset.value = typeof value === 'string' ? value : JSON.stringify(value);
 					} catch (e) {}
 					if (column.render) {
 						td.innerHTML = column.render.call(q, record[column.field], record);
