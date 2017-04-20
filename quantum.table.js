@@ -12,12 +12,12 @@
 				q.element = selector;
 			}
 			q.settings = settings;
-			q._renderGrid();
+			q._render();
 			return q;
 		}
 	}
 
-	QuantumTable.prototype._renderGrid = function () {
+	QuantumTable.prototype._render = function () {
 		var q = this;
 
 		var caption, colgroup, thead, tbody, tfoot;
@@ -159,6 +159,7 @@
 
 		var element = q.element || document.querySelector(q.selector);
 		if (element) {
+			q.destroy();
 			if (q.settings.width) {
 				element.style.width = typeof q.settings.width === 'number' ? q.settings.width + 'px' : q.settings.width;
 			}
@@ -184,6 +185,26 @@
 
 		if (q.settings.onRenderCompleted) {
 			q.settings.onRenderCompleted.call(q);
+		}
+		return q;
+	};
+
+	QuantumTable.prototype.update = function (setting, value) {
+		var q = this;
+		if (setting) {
+			q.settings[setting] = value;
+			q._render();
+		}
+		return q;
+	};
+
+	QuantumTable.prototype.destroy = function () {
+		var q = this,
+			element = q.element || document.querySelector(q.selector);
+		if (element) {
+			while (element.firstChild) {
+				element.firstChild.remove();
+			}
 		}
 		return q;
 	};
