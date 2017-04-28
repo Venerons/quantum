@@ -29,17 +29,16 @@
 		}
 
 		// COLGROUP
+		/*
 		colgroup = document.createElement('colgroup');
 		q.settings.columns.forEach(function (column) {
 			var col = document.createElement('col');
 			if (column.size) {
 				col.style.width = typeof column.size === 'number' ? column.size + 'px' : column.size;
 			}
-			if (column.hidden) {
-				col.hidden = true; // th.setAttribute('hidden', true);
-			}
 			colgroup.appendChild(col);
 		});
+		*/
 
 		// THEAD
 		var tr;
@@ -49,11 +48,9 @@
 				if (column.caption) {
 					th.textContent = column.caption;
 				}
-				/*
 				if (column.size) {
 					th.style.width = typeof column.size === 'number' ? column.size + 'px' : column.size;
 				}
-				*/
 				if (column.hidden) {
 					th.hidden = true; // th.setAttribute('hidden', true);
 				}
@@ -135,6 +132,12 @@
 				var tr = document.createElement('tr');
 				q.settings.columns.forEach(function (column) {
 					var td = document.createElement('td');
+					if (column.style) {
+						td.style = column.style;
+					}
+					if (column.hidden) {
+						td.hidden = true; // td.setAttribute('hidden', true);
+					}
 					try {
 						var value = record[column.field];
 						td.dataset.value = typeof value === 'string' ? value : JSON.stringify(value);
@@ -143,9 +146,6 @@
 						td.innerHTML = column.render.call(q, record[column.field], record, td);
 					} else {
 						td.textContent = record[column.field];
-					}
-					if (column.hidden) {
-						td.hidden = true; // td.setAttribute('hidden', true);
 					}
 					tr.appendChild(td);
 				});
