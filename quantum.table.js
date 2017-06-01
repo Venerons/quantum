@@ -73,7 +73,7 @@
 		} else {
 			q.settings.records.forEach(function (record) {
 				var g = record[q.settings.group.field];
-				if (!g) {
+				if (g === null || g === undefined) {
 					g = 'No Group';
 				}
 				if (!groups[g]) {
