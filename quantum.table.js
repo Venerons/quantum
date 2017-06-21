@@ -149,6 +149,11 @@
 					}
 					tr.appendChild(td);
 				});
+				if (q.settings.onRowSelected) {
+					tr.addEventListener('click', function () {
+						q.settings.onRowSelected.call(q, record, tr);
+					}, false);
+				}
 				tbody.appendChild(tr);
 			});
 		});
@@ -239,7 +244,7 @@ var qt = Quantum.table('#my-table', {
 			caption: 'First Name',
 			size: '45%',
 			hidden: false,
-			render: function (value, record) { return '<em>' + value + '</em>'; }
+			render: function (value, record, td) { return '<em>' + value + '</em>'; }
 		},
 		{
 			field: 'lastname',
@@ -257,6 +262,9 @@ var qt = Quantum.table('#my-table', {
 		{ field: 'firstname', direction: 'asc' },
 		{ field: 'lastname', direction: 'desc' }
 	],
+	onRowSelected: function (record, tr) {
+		alert(JSON.stringify(record));
+	},
 	onRenderCompleted: function () {
 		console.timeEnd('render');
 	}
