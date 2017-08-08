@@ -133,7 +133,7 @@
 				q.settings.columns.forEach(function (column) {
 					var td = document.createElement('td');
 					if (column.style) {
-						td.style = column.style;
+						td.setAttribute('style', column.style); //td.style = column.style;
 					}
 					if (column.hidden) {
 						td.hidden = true; // td.setAttribute('hidden', true);
@@ -207,8 +207,12 @@
 		var q = this,
 			element = q.element || document.querySelector(q.selector);
 		if (element) {
-			while (element.firstChild) {
-				element.firstChild.remove();
+			try {
+				while (element.firstChild) {
+					element.firstChild.remove();
+				}
+			} catch (e) {
+				element.innerHTML = '';
 			}
 		}
 		return q;
