@@ -75,6 +75,10 @@
 	};
 	*/
 
+	Quantum.query = function (selector) {
+		return document.querySelectorAll(selector);
+	};
+
 	Quantum.type = function (object) {
 		return Object.prototype.toString.call(object).replace(/^\[object (.+)\]$/, '$1');
 	};
@@ -136,6 +140,148 @@
 				node.appendChild(element);
 			}
 		});
+	};
+
+	/*
+
+	Quantum.ajax({
+		type: <'GET' || 'POST'>,
+		url: <string>,
+		async: <true || false>,
+		contentType: <'application/x-www-form-urlencoded' || 'text/plain' || 'multipart/form-data'>,
+		data: <string || object || HTMLFormElement>,
+		responseType: <'text' || 'json' || 'document' || 'arraybuffer' || 'blob'>,
+		uploadProgress: <function(percentage)>,
+		progress: <function(percentage)>,
+		success: <function(response)>,
+		error: <function(error)>
+	});
+
+	Note:
+
+	- url is mandatory
+	- HTMLFormElement as data only if type == 'POST' and contentType == 'multipart/form-data'
+	- if resonseType == 'json', the response will be the JSON already parsed
+
+	*/
+
+	Quantum.ajax = function (settings) {
+		if (!settings.url) {
+			return false;
+		}
+		settings.type = settings.type.toUpperCase() || 'GET';
+		settings.async = settings.async === undefined ? true : settings.async;
+		settings.contentType = settings.contentType || 'application/x-www-form-urlencoded';
+		settings.responseType = settings.responseType || 'text';
+		settings.uploadProgress = settings.uploadProgress || function (p) { console.log('XMLHttpRequest Upload ' + p + '%'); };
+		settings.progress = settings.progress || function (p) { console.log('XMLHttpRequest Response ' + p + '%'); };
+		settings.success = settings.success || function (data) { console.log(data); };
+		settings.error = settings.error || function (error) { console.error(error); };
+
+		// https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+
+		try {
+			var xhr = new XMLHttpRequest();
+
+			xhr.upload.addEventListener('progress', function (e) {
+				if (e.lengthComputable) {
+					settings.uploadProgress(Math.round((e.loaded * 100) / e.total));
+				} else {
+					console.log('upload progress - not computable');
+				}
+			}, false);
+
+			xhr.upload.addEventListener('error', function (e) {
+				settings.error(new Error('XMLHttpRequest Upload Error'));
+			}, false);
+
+			xhr.upload.addEventListener('abort', function (e) {
+				settings.error(new Error('XMLHttpRequest Upload Aborted'));
+			}, false);
+			
+			xhr.upload.addEventListener('load', function (e) {
+				settings.uploadProgress(100);
+				console.log('xhr upload load - xhr upload completed');
+			}, false);
+
+			xhr.addEventListener('progress', function (e) {
+				if (e.lengthComputable) {
+					settings.progress(Math.round((e.loaded * 100) / e.total));
+				} else {
+					console.log('xhr progress - not computable');
+				}
+			}, false);
+
+			xhr.addEventListener('error', function (e) {
+				settings.error(new Error('XMLHttpRequest Error - Connection error of some sort'));
+			}, false);
+
+			xhr.addEventListener('abort', function (e) {
+				settings.error(new Error('XMLHttpRequest Abort'));
+			}, false);
+			
+			xhr.addEventListener('load', function (e) {
+				if (xhr.status >= 200 && xhr.status < 400 || xhr.status === 0) {
+					var response;
+					// TODO - responseType 'xml' is permitted?
+					if (settings.responseType.toLowerCase() === 'xml') {
+						response = xhr.responseXML;
+					} else if (settings.responseType.toLowerCase() === 'arraybuffer') {
+						response = xhr.response;
+					} else {
+						response = xhr.responseText;
+					}
+					if (settings.responseType.toLowerCase() === 'json') {
+						response = JSON.parse(response);
+					}
+					settings.success(response);
+				} else {
+					settings.error(new Error('XMLHttpRequest Error - Server reached, but it returned an error'));
+				} 
+			}, false);
+
+			if (settings.type === 'GET') {
+				if (settings.data) {
+					settings.url += '?' + settings.data;
+				}
+				xhr.open(settings.type, settings.url, settings.async);
+				xhr.responseType = settings.responseType;
+				xhr.send(null);
+			} else if (settings.type === 'POST') {
+				xhr.open(settings.type, settings.url, settings.async);
+				xhr.responseType = settings.responseType;
+				xhr.setRequestHeader('Content-Type', settings.contentType);
+				var data = null;
+				if (settings.data) {
+					// about content type: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#Submitting_forms_and_uploading_files
+					if (settings.contentType === 'application/x-www-form-urlencoded') {
+						data = settings.data;
+					} else if (settings.contentType === 'text/plain') {
+						// TODO - check if data is already a well formatted text contentype and convert it otherwise
+						data = settings.data;
+					} else if (settings.contentType === 'multipart/form-data') {
+						// https://developer.mozilla.org/en-US/docs/Web/API/FormData
+						if (settings.data.toString() === '[object HTMLFormElement]') {
+							data = new FormData(settings.data);
+						} else {
+							data = new FormData()
+							if (typeof settings.data === 'string') {
+								// TODO - convert string and then append
+							} else {
+								for (var key in settings.data) {
+									if (settings.data.hasOwnProperty(key)) {
+										data.append(key.toString(), settings.data[key]);
+									}
+								}
+							}
+						}
+					}
+				}
+				xhr.send(data);
+			}
+		} catch (e) {
+			settings.error(e);
+		}
 	};
 
 	Quantum.isInteger = function (value) {
