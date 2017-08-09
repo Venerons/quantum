@@ -149,9 +149,9 @@
 					}
 					tr.appendChild(td);
 				});
-				if (q.settings.onRowSelected) {
+				if (q.settings.onRowClick) {
 					tr.addEventListener('click', function () {
-						q.settings.onRowSelected.call(q, record, tr);
+						q.settings.onRowClick.call(q, record, tr);
 					}, false);
 				}
 				tbody.appendChild(tr);
@@ -266,7 +266,7 @@ var qt = Quantum.table('#my-table', {
 		{ field: 'firstname', direction: 'asc' },
 		{ field: 'lastname', direction: 'desc' }
 	],
-	onRowSelected: function (record, tr) {
+	onRowClick: function (record, tr) {
 		alert(JSON.stringify(record));
 	},
 	onRenderCompleted: function () {
