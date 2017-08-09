@@ -16,7 +16,7 @@ echo "Cleanup completed."
 # BUILD
 #
 echo "Build started."
-for FILE in "quantum" "quantum.table" "quantum.blackgate"; do
+for FILE in "quantum" "quantum.table" "quantum.crypto"; do
 	uglifyjs ${FILE}.js --output ${FILE}.min.js --screw-ie8 --mangle --prefix relative --source-map ${FILE}.min.js.map --source-map-include-sources --preamble ${HEADER}
 	if ! [ $? -eq 0 ]; then
 		echo "Error while building ${FILE}.js"
