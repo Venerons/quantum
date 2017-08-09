@@ -138,14 +138,14 @@
 					if (column.hidden) {
 						td.hidden = true; // td.setAttribute('hidden', true);
 					}
+					var value = record[column.field];
 					try {
-						var value = record[column.field];
 						td.dataset.value = typeof value === 'string' ? value : JSON.stringify(value);
 					} catch (e) {}
 					if (column.render) {
-						td.innerHTML = column.render.call(q, record[column.field], record, td);
-					} else {
-						td.textContent = record[column.field];
+						td.innerHTML = column.render.call(q, value, record, td);
+					} else if (value !== null && value !== undefined) {
+						td.textContent = value.toString();
 					}
 					tr.appendChild(td);
 				});
