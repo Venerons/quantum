@@ -2,7 +2,7 @@
 	'use strict';
 
 	var Quantum = Object.create(null);
-	
+
 	Quantum.version = '1.0.0';
 
 	Quantum.exists = function (item) {
