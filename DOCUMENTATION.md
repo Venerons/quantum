@@ -344,4 +344,4 @@ Return a Uint8Array representing the input xor key. The xor is applied on each b
 var encrypted = Quantum.crypto.xorcipher(Quantum.crypto.stringToBuffer('My secret message'), Quantum.crypto.stringToBuffer('My secret key'));
 
 var decrypted = Quantum.crypto.xorcipher(encrypted, Quantum.crypto.stringToBuffer('My secret key'));
-``
+```
