@@ -267,4 +267,81 @@ var qt = Quantum.table('#my-table', {
 
 ## Crypto
 
-TODO
+Quantum Crypto is a module that provides useful cryptographic functions and binary data manipulation.
+
+In order to use this module you need to include the `quantum.crypto.js` file, or you can just include the `quantum.bundle.js` that already have all the modules inside.
+
+### Quantum.crypto.randomBuffer(bytesNumber)
+
+Return a Uint8Array of `bytesNumber` length filled with random values.
+Useful to generate salts, random keys, etc.
+The maximum allowed as `bytesNumber` is `65536`.
+
+### Quantum.crypto.bufferToString(buffer)
+
+Return a string representing the input buffer.
+
+### Quantum.crypto.stringToBuffer(string)
+
+Return a Uint8Array buffer representing the input string.
+
+### Quantum.crypto.bufferToBase64(buffer)
+
+Return a base64 string representing the input buffer.
+
+### Quantum.crypto.base64ToBuffer(string)
+
+Return a Uint8Array buffer representing the input base64 string.
+
+### Quantum.crypto.bufferToHex(buffer)
+
+Return a hex string representing the input buffer.
+
+### Quantum.crypto.hexToBuffer(string)
+
+Return a Uint8Array buffer representing the input hex string.
+
+### Quantum.crypto.bufferToURIEncoding(buffer)
+
+Return a URI Encoding string representing the input buffer.
+
+### Quantum.crypto.URIEncodingToBuffer(string)
+
+Return a Uint8Array buffer representing the input URI Encoding string.
+
+### Quantum.crypto.bufferToBitString(buffer)
+
+Return a bit string representing the input buffer.
+
+### Quantum.crypto.bitStringToBuffer(string)
+
+Return a Uint8Array buffer representing the input bit string.
+
+### Quantum.crypto.randomPassword(passwordLength, charset)
+
+Returns a random password of the given `passwordLength` length (default 16) with characters taken from the given `charset` (default `Quantum.crypto.DEFAULTCHARSET`).
+
+### Quantum.crypto.hash(algo, buffer)
+
+Returns a promise with the hash digest of the given buffer.
+Supported algorithms: SHA-1, SHA-256, SHA-384, SHA-512
+
+```js
+Quantum.crypto.hash('SHA-256', Quantum.crypto.stringToBuffer('foobar')).then(function (bufferHash) {
+    var hexDigest = Quantum.crypto.bufferToHex(bufferHash);
+});
+```
+
+### Quantum.crypto.vaultPassword(masterPassword, serviceID, passwordLength, charset)
+
+TODO Documentation
+
+### Quantum.crypto.xorcipher(input, key)
+
+Return a Uint8Array representing the input xor key. The xor is applied on each byte (8bit) of the input using the corresponding byte of the key (the key is circular).
+
+```js
+var encrypted = Quantum.crypto.xorcipher(Quantum.crypto.stringToBuffer('My secret message'), Quantum.crypto.stringToBuffer('My secret key'));
+
+var decrypted = Quantum.crypto.xorcipher(encrypted, Quantum.crypto.stringToBuffer('My secret key'));
+``
