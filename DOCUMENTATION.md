@@ -213,7 +213,7 @@ hidden  | `true` or `false`        | Optional. Default `false`. Whenever the col
 style   | `<string>`               | Optional. CSS style string applyed on each cell of the column.
 render  | `<function>`             | Optional. Custom function to render each cell of the column. The given function will have the parameters `value` that is the corresponding value that should be rendered, `record` that is the full corresponding record and `td` that is the corresponding HTMLTableCellElement element.
 
-## Full Example
+### Full Example
 
 ```js
 var qt = Quantum.table('#my-table', {
