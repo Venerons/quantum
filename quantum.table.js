@@ -194,10 +194,12 @@
 		return q;
 	};
 
-	QuantumTable.prototype.update = function (setting, value) {
+	QuantumTable.prototype.update = function (settings) {
 		var q = this;
-		if (setting) {
-			q.settings[setting] = value;
+		if (settings) {
+			Object.keys(settings).forEach(function (prop) {
+				q.settings[prop] = settings[prop];
+			});
 			q._render();
 		}
 		return q;
