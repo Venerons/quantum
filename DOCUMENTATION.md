@@ -198,7 +198,7 @@ caption           | `<string>`               | Optional. Text caption of the tab
 records           | `<array>`                | Mandatory. Array of objects containing the data that will be rendered on the table.
 columns           | `<array>`                | Mandatory. Array of objects containing the columns settings of the table. More documentation about columns settings on the **Columns Settings** section.
 group             | `<object>`               | Optional. If available, will activate data grouping. Data will be grouped by the `field` key, sorted with the `sort` given function and you can give a custom render for the group header with the `render` function.
-sort              | `<array>`                | Optional. If available, will activate data sorting. If also grouping is activate, the data are sorted inside each separate group. Each sorting has a `field` key and a `direction` (`asc` or `desc`).
+sort              | `<array>`                | Optional. If available, will activate data sorting. If also grouping is activate, the data are sorted inside each separate group. Each sorting has a `field` key and a `direction` (`asc`, `desc`, or sorting function).
 onRowClick        | `<function>`             | Optional. Function executed each time the user clicks on a row of the table. Parameters of the function are `record` that is the corresponding record and `tr` that is the corresponding HTMLTableRowElement element.
 onRenderCompleted | `<function>`             | Optional. Function executed when redering of the table is completed.
 
@@ -254,13 +254,14 @@ var qt = Quantum.table('#my-table', {
 	},
 	sort: [
 		{ field: 'firstname', direction: 'asc' }, // sort by firstname first
-		{ field: 'lastname', direction: 'desc' }  // and then by lastname
+		{ field: 'lastname', direction: 'desc' },  // and then by lastname
+		{ field: 'id', direction: function (a, b) { return a < b ? -1 : 1; } } // finally sort by id using the given function
 	],
 	onRowClick: function (record, tr) {
-		Quantum.log('debug', 'Quantum Table onRowClick', JSON.stringify(record));
+		Quantum.log('debug', 'Quantum Table', 'onRowClick', record, tr);
 	},
 	onRenderCompleted: function () {
-		Quantum.log('debug', 'Quantum Table onRenderCompleted');
+		Quantum.log('debug', 'Quantum Table', 'onRenderCompleted');
 	}
 });
 ```
