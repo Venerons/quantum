@@ -119,7 +119,19 @@
 			});
 		}
 
-		(q.settings.group && q.settings.group.sort ? Object.keys(groups).sort(q.settings.group.sort) : Object.keys(groups)).forEach(function (groupID) {
+		var array;
+		if (q.settings.group && q.settings.group.sort) {
+			if (q.settings.group.sort === 'asc') {
+				array = Object.keys(groups).sort(function (a, b) { return a < b ? -1 : 1; });
+			} else if (q.settings.group.sort === 'desc') {
+				array = Object.keys(groups).sort(function (a, b) { return a > b ? -1 : 1; });
+			} else {
+				array = Object.keys(groups).sort(q.settings.group.sort);
+			}
+		} else {
+			array = Object.keys(groups);
+		}
+		array.forEach(function (groupID) {
 			var group = groups[groupID];
 			if (q.settings.group) {
 				var tr = document.createElement('tr'),
@@ -270,7 +282,7 @@ var qt = Quantum.table('#my-table', {
 	],
 	group: {
 		field: 'team',
-		sort: function (a, b) { return a < b ? -1 : 1; },
+		sort: 'asc', // 'asc', 'desc' or sorting function
 		render: function (value) { return '<strong>' + value + '</strong>'; }
 	},
 	sort: [
