@@ -69,12 +69,12 @@
 		tbody = document.createElement('tbody');
 		var groups = {};
 		if (!q.settings.group) {
-			groups['No Group'] = q.settings.records;
+			groups['undefined'] = q.settings.records;
 		} else {
 			q.settings.records.forEach(function (record) {
 				var g = record[q.settings.group.field];
 				if (g === null || g === undefined) {
-					g = 'No Group';
+					g = 'undefined';
 				}
 				if (!groups[g]) {
 					groups[g] = [];
@@ -88,6 +88,14 @@
 				var s = q.settings.sort[index];
 				if (!s) {
 					return 0;
+				} else if (s.direction === 'asc')
+					if (a[s.field] < b[s.field]) {
+						return -1;
+					} else if (a[s.field] > b[s.field]) {
+						return 1;
+					} else {
+						return chainSort(index + 1, a, b);
+					}
 				} else if (s.direction === 'desc') {
 					if (a[s.field] > b[s.field]) {
 						return -1;
@@ -96,12 +104,9 @@
 					} else {
 						return chainSort(index + 1, a, b);
 					}
-				} else { // s.direction === 'asc'
-					if (a[s.field] < b[s.field]) {
-						return -1;
-					} else if (a[s.field] > b[s.field]) {
-						return 1;
-					} else {
+				} else {
+					var ret = s.direction(a, b);
+					if (ret === 0) {
 						return chainSort(index + 1, a, b);
 					}
 				}
@@ -120,6 +125,9 @@
 				var tr = document.createElement('tr'),
 					td = document.createElement('td');
 				td.setAttribute('colspan', q.settings.columns.length);
+				try {
+					td.dataset.quantumGroup = typeof groupID === 'string' ? groupID : JSON.stringify(groupID); // data-quantum-group
+				} catch (e) {}
 				if (q.settings.group.render) {
 					td.innerHTML = q.settings.group.render.call(q, groupID, td);
 				} else {
@@ -133,14 +141,15 @@
 				q.settings.columns.forEach(function (column) {
 					var td = document.createElement('td');
 					if (column.style) {
-						td.setAttribute('style', column.style); //td.style = column.style;
+						td.setAttribute('style', column.style); // td.style = column.style;
 					}
 					if (column.hidden) {
 						td.hidden = true; // td.setAttribute('hidden', true);
 					}
 					var value = record[column.field];
 					try {
-						td.dataset.value = typeof value === 'string' ? value : JSON.stringify(value);
+						td.dataset.quantumField = column.field; // data-quantum-field
+						td.dataset.quantumValue = typeof value === 'string' ? value : JSON.stringify(value); // data-quantum-value
 					} catch (e) {}
 					if (column.render) {
 						td.innerHTML = column.render.call(q, value, record, td);
