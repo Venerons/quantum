@@ -249,7 +249,7 @@ var qt = Quantum.table('#my-table', {
 	],
 	group: {
 		field: 'team',
-		sort: function (a, b) { return a < b ? -1 : 1; },
+		sort: 'asc', // 'asc', 'desc' or sorting function
 		render: function (value) { return '<strong>' + value + '</strong>'; }
 	},
 	sort: [
