@@ -88,7 +88,7 @@
 				var s = q.settings.sort[index];
 				if (!s) {
 					return 0;
-				} else if (s.direction === 'asc')
+				} else if (s.direction === 'asc') {
 					if (a[s.field] < b[s.field]) {
 						return -1;
 					} else if (a[s.field] > b[s.field]) {
