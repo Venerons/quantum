@@ -1,13 +1,10 @@
 # Quantum
 
-_Copyright (c) 2017 Daniele Veneroni._  
-_Released under MIT License (X11 License). See [LICENSE.md](LICENSE.md) for further information._
-
 Quantum is a suite of JavaScript libraries.
 
 ## Licensing
 
-Quantum is released under MIT License (X11 License). [Read the full license](LICENSE.md). 
+Quantum is released under Blue Oak Model License 1.0.0. [Read the full license](LICENSE.md). 
 
 ## Credits
 
