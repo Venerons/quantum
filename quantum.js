@@ -1,3 +1,4 @@
+// Quantum 1.0.0 | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
 (function () {
 	'use strict';
 
@@ -57,24 +58,6 @@
 			(error.stack        ? '\n\nStack:\n\n' + error.stack : ''));
 	};
 
-	/*
-	window.onerror = function (message, filename, lineno, colno, error) {
-		if (error) {
-			error.fileName = error.fileName || filename || null;
-			error.lineNumber = error.lineNumber || lineno || null;
-			error.columnNumber = error.columnNumber || colno || null;
-		} else {
-			error = {
-				message: message,
-				fileName: filename,
-				lineNumber: lineno,
-				columnNumber: colno
-			};
-		}
-		Quantum.error(error, 'Uncatched Exception');
-	};
-	*/
-
 	Quantum.query = function (selector) {
 		return document.querySelectorAll(selector);
 	};
@@ -90,20 +73,6 @@
 			return v.toString(16);
 		});
 	};
-
-	/*
-	Quantum.require({
-		scripts: [
-			{ type: 'css', path: 'path/to/file.css', onload: function () { console.info('Script 1 loaded.'); } },
-			{ type: 'css', path: 'path/to/file.css', onload: function () { console.info('Script 2 loaded.'); } },
-			{ type: 'js', path: 'path/to/file.js', async: false, defer: false, onload: function () { console.info('Script 3 loaded.'); } },
-			{ type: 'js', path: 'path/to/file.js', async: false, defer: false, onload: function () { console.info('Script 4 loaded.'); } }
-		],
-		onload: function () {
-			console.info('Every script has been loaded.');
-		}
-	});
-	*/
 
 	Quantum.require = function (settings) {
 		var pending = settings.scripts.length,
@@ -141,29 +110,6 @@
 			}
 		});
 	};
-
-	/*
-
-	Quantum.ajax({
-		type: <'GET' || 'POST'>,
-		url: <string>,
-		async: <true || false>,
-		contentType: <'application/x-www-form-urlencoded' || 'text/plain' || 'multipart/form-data'>,
-		data: <string || object || HTMLFormElement>,
-		responseType: <'text' || 'json' || 'document' || 'arraybuffer' || 'blob'>,
-		uploadProgress: <function(percentage)>,
-		progress: <function(percentage)>,
-		success: <function(response)>,
-		error: <function(error)>
-	});
-
-	Note:
-
-	- url is mandatory
-	- HTMLFormElement as data only if type == 'POST' and contentType == 'multipart/form-data'
-	- if resonseType == 'json', the response will be the JSON already parsed
-
-	*/
 
 	Quantum.ajax = function (settings) {
 		if (!settings.url) {
