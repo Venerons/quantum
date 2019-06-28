@@ -1,3 +1,4 @@
+// Quantum 1.0.0 | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
 (function () {
 	'use strict';
 
@@ -246,54 +247,3 @@
 	}
 	window.Quantum.table = QuantumTable;
 })();
-
-/*
-console.time('render');
-var qt = Quantum.table('#my-table', {
-	width: 400, // number of px, or string with specific unit (i.e. '100%')
-	height: 200, // number of px, or string with specific unit (i.e. '100%')
-	caption: 'Teams',
-	records: [
-		{ id: 1, team: 'Red', firstname: 'Mario', lastname: 'Rossi' },
-		{ id: 2, team: 'Blue', firstname: 'Daniele', lastname: 'Pino' },
-		{ id: 3, team: 'Red', firstname: 'Giuseppe', lastname: 'Verdi' },
-		{ id: 4, team: 'Blue', firstname: 'Daniele', lastname: 'Veneroni' }
-	],
-	columns: [
-		{
-			field: 'id',
-			caption: 'ID',
-			size: '10%',
-			hidden: true
-		},
-		{
-			field: 'firstname',
-			caption: 'First Name',
-			size: '45%',
-			hidden: false,
-			render: function (value, record, td) { return '<em>' + value + '</em>'; }
-		},
-		{
-			field: 'lastname',
-			caption: 'Last Name',
-			size: '45%',
-			hidden: false
-		}
-	],
-	group: {
-		field: 'team',
-		sort: 'asc', // 'asc', 'desc' or sorting function
-		render: function (value) { return '<strong>' + value + '</strong>'; }
-	},
-	sort: [
-		{ field: 'firstname', direction: 'asc' },
-		{ field: 'lastname', direction: 'desc' }
-	],
-	onRowClick: function (record, tr) {
-		alert(JSON.stringify(record));
-	},
-	onRenderCompleted: function () {
-		console.timeEnd('render');
-	}
-});
-*/
