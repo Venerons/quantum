@@ -1,16 +1,17 @@
-// https://blog.jcoglan.com/2012/07/16/designing-vaults-generator-algorithm/
-// https://www.marketingtechblog.com/javascript-password-strength/
-// https://codereview.stackexchange.com/questions/40944/verifying-password-strength-using-javascript
-// https://github.com/dropbox/zxcvbn
-// http://www.openwall.com/
-// http://pgs.ece.cmu.edu
-
-// 12+ chars, letters, digits, symbols in unusual place
-// best: 3class16
-// ok: 2word16, 3class12
-
+// Quantum 1.0.0 | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
 (function () {
 	'use strict';
+	
+	// https://blog.jcoglan.com/2012/07/16/designing-vaults-generator-algorithm/
+	// https://www.marketingtechblog.com/javascript-password-strength/
+	// https://codereview.stackexchange.com/questions/40944/verifying-password-strength-using-javascript
+	// https://github.com/dropbox/zxcvbn
+	// http://www.openwall.com/
+	// http://pgs.ece.cmu.edu
+
+	// 12+ chars, letters, digits, symbols in unusual place
+	// best: 3class16
+	// ok: 2word16, 3class12
 
 	var Crypto = Object.create(null);
 
