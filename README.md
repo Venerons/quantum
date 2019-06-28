@@ -1,6 +1,6 @@
 # Quantum
 
-Quantum is a suite of JavaScript libraries.
+Quantum is a suite of JavaScript libraries. See [Documentation](DOCUMENTATION.md).
 
 ## Licensing
 
