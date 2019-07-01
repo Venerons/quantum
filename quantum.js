@@ -1,14 +1,14 @@
-// Quantum 1.0.0 | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
+// Quantum 1.1.0 | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
 (function () {
 	'use strict';
 
 	var Quantum = Object.create(null);
 
-	Quantum.version = '1.0.0';
+	Quantum.version = '1.1.0';
 
 	Quantum.exists = function (item) {
 		try {
-			return item !== null && item !== 'null' && item !== undefined && item !== 'undefined' && typeof item !== 'undefined';
+			return item !== null && item !== undefined && typeof item !== 'undefined';
 		} catch (e) {
 			return false;
 		}
@@ -76,37 +76,60 @@
 
 	Quantum.require = function (settings) {
 		var pending = settings.scripts.length,
-			requests = settings.scripts.length;
+			requests = settings.scripts.length,
+			errors = [];
 		settings.scripts.forEach(function (script) {
-			var element, node;
-			var callback = function () {
-				pending--;
-				//console.log('Quantum.require: ' + (100 - (100 * pending / requests)).toFixed(2) + '% - Loaded: ' + script.path + ' - Pending: ' + pending);
-				if (script.onload) {
-					script.onload.call();
-				}
-				if (pending === 0 && settings.onload) {
-					settings.onload.call();
-				}
-			};
 			if (script.type === 'js') {
-				element = document.createElement('script');
+				var element = document.createElement('script');
 				element.type = 'application/javascript';
 				element.async = script.async ? true : false;
 				element.defer = script.defer ? true : false;
-				element.onload = callback;
+				element.onerror = function (e) {
+					pending--;
+					if (script.onerror) {
+						script.onerror.call(null, e);
+					}
+					errors.push(e);
+					if (pending === 0 && settings.onload) {
+						settings.onload.call(null, errors);
+					}
+				};
+				element.onload = function () {
+					pending--;
+					if (script.onload) {
+						script.onload.call(null);
+					}
+					if (pending === 0 && settings.onload) {
+						settings.onload.call(null, errors);
+					}
+				};
 				element.src = script.path;
-				node = document.body || document.head;
+				(document.body || document.head).appendChild(element);
 			} else if (script.type === 'css') {
-				element = document.createElement('link');
+				var element = document.createElement('link');
 				element.rel = 'stylesheet';
 				element.type = 'text/css';
-				element.onload = callback;
+				element.onerror = function (e) {
+					pending--;
+					if (script.onerror) {
+						script.onerror.call(null, e);
+					}
+					errors.push(e);
+					if (pending === 0 && settings.onload) {
+						settings.onload.call(null, errors);
+					}
+				};
+				element.onload = function () {
+					pending--;
+					if (script.onload) {
+						script.onload.call(null);
+					}
+					if (pending === 0 && settings.onload) {
+						settings.onload.call(null, errors);
+					}
+				};
 				element.href = script.path;
-				node = document.head || document.body;
-			}
-			if (element && node) {
-				node.appendChild(element);
+				(document.head || document.body).appendChild(element);
 			}
 		});
 	};
@@ -230,37 +253,37 @@
 		}
 	};
 
-	Quantum.isInteger = function (value) {
-		return !isNaN(value) && Quantum.isInteger.regex.test(value);
+	Quantum.is_integer = function (value) {
+		return !isNaN(value) && Quantum.is_integer.regex.test(value);
 	};
-	Quantum.isInteger.regex = /^[-+]?[0-9]+$/;
+	Quantum.is_integer.regex = /^[-+]?[0-9]+$/;
 
-	Quantum.isFloat = function (value) {
-		return !isNaN(value) && Quantum.isFloat.regex.test(value);
+	Quantum.is_float = function (value) {
+		return !isNaN(value) && Quantum.is_float.regex.test(value);
 	};
-	Quantum.isFloat.regex = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
+	Quantum.is_float.regex = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
 
 	// validate i.e. 12ADff, #12ADff, 0x12ADff
-	Quantum.isHex = function (string) {
-		return Quantum.isHex.regex.test(string);
+	Quantum.is_hex = function (string) {
+		return Quantum.is_hex.regex.test(string);
 	};
-	Quantum.isHex.regex = /^((0x|0X)?|#?)[a-fA-F0-9]+$/;
+	Quantum.is_hex.regex = /^((0x|0X)?|#?)[a-fA-F0-9]+$/;
 
-	Quantum.isEmail = function (string) {
-		return Quantum.isEmail.regex.test(string);
+	Quantum.is_email = function (string) {
+		return Quantum.is_email.regex.test(string);
 	};
-	Quantum.isEmail.regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	//Quantum.isEmail.regex = /[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+	Quantum.is_email.regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	//Quantum.is_email.regex = /[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
-	Quantum.isIPv4 = function (string) {
-		return Quantum.isIPv4.regex.test(string);
+	Quantum.is_IPv4 = function (string) {
+		return Quantum.is_IPv4.regex.test(string);
 	};
-	Quantum.isIPv4.regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
+	Quantum.is_IPv4.regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
 
-	Quantum.isIPv6 = function (string) {
-		return Quantum.isIPv6.regex.test(string);
+	Quantum.is_IPv6 = function (string) {
+		return Quantum.is_IPv6.regex.test(string);
 	};
-	Quantum.isIPv6.regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+	Quantum.is_IPv6.regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
 
 	window.Quantum = Quantum;
 })();
