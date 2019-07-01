@@ -8,4 +8,9 @@ Quantum is released under Blue Oak Model License 1.0.0. [Read the full license](
 
 ## Credits
 
-Created and maintained by Daniele Veneroni ([@Venerons](http://twitter.com/Venerons)).
+Created and maintained by Daniele Veneroni.
+
+- [Website](https://venerons.github.io)
+- [GitHub](https://github.com/Venerons/)
+- [CodePen](https://codepen.io/Venerons/)
+- [Twitter](https://twitter.com/Venerons)
