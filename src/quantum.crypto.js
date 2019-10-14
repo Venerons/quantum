@@ -133,7 +133,7 @@
 	*/
 	Crypto.hex_to_buffer = function (string) {
 		if (typeof string !== 'string') {
-			retun null;
+			return null;
 		}
 		var output = new Uint8Array(string.length / 2);
 		for (var i = 0; i < output.byteLength; ++i) {
