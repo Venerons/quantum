@@ -1,18 +1,7 @@
-// Quantum 1.0.0 | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
+// Quantum | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
 (function () {
 	'use strict';
 	
-	// https://blog.jcoglan.com/2012/07/16/designing-vaults-generator-algorithm/
-	// https://www.marketingtechblog.com/javascript-password-strength/
-	// https://codereview.stackexchange.com/questions/40944/verifying-password-strength-using-javascript
-	// https://github.com/dropbox/zxcvbn
-	// http://www.openwall.com/
-	// http://pgs.ece.cmu.edu
-
-	// 12+ chars, letters, digits, symbols in unusual place
-	// best: 3class16
-	// ok: 2word16, 3class12
-
 	var Crypto = Object.create(null);
 
 	/*
@@ -21,20 +10,34 @@
 	Crypto.ALPHA_LOWER = 'abcdefghijklmnopqrstuvwxyz';
 	Crypto.ALPHA_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	Crypto.NUMBERS = '0123456789';
+	Crypto.DASH = '-';
+	Crypto.SYMBOLS = '!"#$%&\'()*+,./:;<=>?@[\\]^_`{|}~';
 	Crypto.SPACE = ' ';
-	Crypto.SYMBOLS = '-_!"#$%&\'()*+,./:;<=>?@[\\]^{|}~';
-	Crypto.DEFAULTCHARSET = null;
-	Crypto.DEFAULTCHARSET = Crypto.ALPHA_LOWER.concat(Crypto.ALPHA_UPPER).concat(Crypto.NUMBERS).concat(Crypto.SYMBOLS);
+	Crypto.DEFAULTCHARSET = Crypto.ALPHA_LOWER.concat(Crypto.ALPHA_UPPER).concat(Crypto.NUMBERS).concat(Crypto.DASH).concat(Crypto.SYMBOLS);
 
 	/*
 	** RANDOM DATA BUFFER
 	**
-	** Return a Uint8Array of bytesNumber length filled with random values.
+	** Return a Uint8Array of bytes_number length filled with random values.
 	** Useful to generate salts, random keys, etc.
-	** The maximum allowed as bytesNumber is 65536.
+	** The maximum allowed as bytes_number is 65536.
 	*/
-	Crypto.randomBuffer = function (bytesNumber) {
-		return crypto.getRandomValues(new Uint8Array(bytesNumber || 512));
+	Crypto.random_buffer = function (bytes_number) {
+		return (crypto || webkitCrypto || msCrypto).getRandomValues(new Uint8Array(bytes_number || 512));
+	};
+
+	/*
+	** RANDOM PASSWORD
+	*/
+	Crypto.random_password = function (length, charset) {
+		length = length || 16;
+		charset = charset || Crypto.DEFAULTCHARSET;
+		var random_bytes = Crypto.random_buffer(length),
+			output_string = [];
+		for (var i = 0; i < random_bytes.length; ++i) {
+			output_string.push(charset.charAt(random_bytes[i] % charset.length));
+		}
+		return output_string.join('');
 	};
 
 	/*
@@ -42,39 +45,24 @@
 	**
 	** Return a string representing the input buffer.
 	*/
-	Crypto.bufferToString = 'TextDecoder' in window ? function (buffer, encoding) {
-		var dataView;
+	Crypto.buffer_to_string = function (buffer, encoding) {
+		var data_view;
 		if (buffer instanceof ArrayBuffer) {
-			dataView = new DataView(buffer);
+			data_view = new DataView(buffer);
 		} else if (buffer.buffer instanceof ArrayBuffer) {
-			dataView = buffer;
+			data_view = buffer;
 		} else {
-			throw new Error('Invalid bufferToString buffer');
+			return null;
 		}
-		var decoder = new TextDecoder(encoding || 'utf-8');
-		return decoder.decode(dataView);
-	} : String.fromCodePoint ? function (buffer) {
-		if (!(buffer instanceof Uint16Array)) {
-			if (buffer instanceof ArrayBuffer) {
-				buffer = new Uint16Array(buffer);
-			} else if (buffer.buffer instanceof ArrayBuffer) {
-				buffer = new Uint16Array(buffer.buffer);
-			} else {
-				throw new Error('Invalid bufferToBitString buffer');
-			}
+		if ('TextDecoder' in window) {
+			var decoder = new TextDecoder(encoding || 'utf-8');
+			return decoder.decode(data_view);
+		} else if (String.fromCodePoint) {
+			return String.fromCodePoint.apply(null, buffer);
+		} else if (String.fromCharCode) {
+			return String.fromCharCode.apply(null, buffer);
 		}
-		return String.fromCodePoint.apply(null, buffer);
-	} : function (buffer) {
-		if (!(buffer instanceof Uint16Array)) {
-			if (buffer instanceof ArrayBuffer) {
-				buffer = new Uint16Array(buffer);
-			} else if (buffer.buffer instanceof ArrayBuffer) {
-				buffer = new Uint16Array(buffer.buffer);
-			} else {
-				throw new Error('Invalid bufferToBitString buffer');
-			}
-		}
-		return String.fromCharCode.apply(null, buffer);
+		return null;
 	};
 
 	/*
@@ -82,55 +70,29 @@
 	**
 	** Return a Uint8Array buffer representing the input string.
 	*/
-	Crypto.stringToBuffer = 'TextEncoder' in window ? function (string, encoding) {
+	Crypto.string_to_buffer = function (string, encoding) {
 		if (typeof string !== 'string') {
-			throw new Error('Invalid stringToBuffer string');
+			return null;
 		}
-		var encoder = new TextEncoder(encoding || 'utf-8');
-		return encoder.encode(string);
-	} : String.fromCodePoint ? function (string) {
-		if (typeof string !== 'string') {
-			throw new Error('Invalid stringToBuffer string');
+		if ('TextEncoder' in window) {
+			var encoder = new TextEncoder(encoding || 'utf-8');
+			return encoder.encode(string);
+		} else if (String.fromCodePoint) {
+			var buffer = new ArrayBuffer(string.length * 2), // 2 bytes for each char
+				buffer_view = new Uint16Array(buffer);
+			for (var i = 0; i < string.length; ++i) {
+				buffer_view[i] = string.codePointAt(i);
+			}
+			return new Uint8Array(buffer);
+		} else if (String.fromCharCode) {
+			var buffer = new ArrayBuffer(string.length * 2), // 2 bytes for each char
+				bufferView = new Uint16Array(buffer);
+			for (var i = 0; i < string.length; ++i) {
+				bufferView[i] = string.charCodeAt(i);
+			}
+			return new Uint8Array(buffer);
 		}
-		var buffer = new ArrayBuffer(string.length * 2), // 2 bytes for each char
-			bufferView = new Uint16Array(buffer);
-		for (var i = 0; i < string.length; ++i) {
-			bufferView[i] = string.codePointAt(i);
-		}
-		return new Uint8Array(buffer);
-	} : function (string) {
-		if (typeof string !== 'string') {
-			throw new Error('Invalid stringToBuffer string');
-		}
-		var buffer = new ArrayBuffer(string.length * 2), // 2 bytes for each char
-			bufferView = new Uint16Array(buffer);
-		for (var i = 0; i < string.length; ++i) {
-			bufferView[i] = string.charCodeAt(i);
-		}
-		return new Uint8Array(buffer);
-	};
-
-	/*
-	** BUFFER TO BASE56
-	**
-	** Return a base64 string representing the input buffer.
-	**
-	** https://gist.github.com/jonleighton/958841
-	*/
-	Crypto.bufferToBase64 = function (buffer) {
-		return btoa(Crypto.bufferToString(buffer));
-	};
-
-	/*
-	** BASE64 TO BUFFER
-	**
-	** Return a Uint8Array buffer representing the input base64 string.
-	*/
-	Crypto.base64ToBuffer = function (string) {
-		if (typeof string !== 'string') {
-			throw new Error('Invalid base64ToBuffer string');
-		}
-		return Crypto.stringToBuffer(atob(string));
+		return null;
 	};
 
 	/*
@@ -138,12 +100,14 @@
 	**
 	** Return a hex string representing the input buffer.
 	*/
-	Crypto.bufferToHex = function (buffer) {
+	Crypto.buffer_to_hex = function (buffer) {
+		//var array = Array.from(new Uint8Array(buffer));
+		//return array.map(b => b.toString(16).padStart(2, '0')).join('');
 		if (!(buffer instanceof ArrayBuffer)) {
 			if (buffer.buffer instanceof ArrayBuffer) {
 				buffer = buffer.buffer;
 			} else {
-				throw new Error('Invalid bufferToHex buffer');
+				return null;
 			}
 		}
 		var view = new DataView(buffer),
@@ -151,12 +115,12 @@
 		if (view.byteLength % 4 === 0) {
 			// using Uint32
 			for (var i = 0; i < view.byteLength; i += 4) {
-				output.push(('00000000' + view.getUint32(i).toString(16)).slice(-8));
+				output.push(view.getUint32(i).toString(16).padStart(8, '0'));
 			}
 		} else {
 			// using Uint8
 			for (var i = 0; i < view.byteLength; ++i) {
-				output.push(('00' + view.getUint8(i).toString(16)).slice(-2));
+				output.push(view.getUint8(i).toString(16).padStart(2, '0'));
 			}
 		}
 		return output.join('');
@@ -167,9 +131,9 @@
 	**
 	** Return a Uint8Array buffer representing the input hex string.
 	*/
-	Crypto.hexToBuffer = function (string) {
+	Crypto.hex_to_buffer = function (string) {
 		if (typeof string !== 'string') {
-			throw new Error('Invalid hexToBuffer string');
+			retun null;
 		}
 		var output = new Uint8Array(string.length / 2);
 		for (var i = 0; i < output.byteLength; ++i) {
@@ -179,154 +143,17 @@
 	};
 
 	/*
-	** BUFFER TO URI ENCODING STRING
-	**
-	** Return a URI Encoding string representing the input buffer.
-	*/
-	Crypto.bufferToURIEncoding = function (buffer) {
-		if (!(buffer instanceof Uint8Array)) {
-			if (buffer instanceof ArrayBuffer) {
-				buffer = new Uint8Array(buffer);
-			} else if (buffer.buffer instanceof ArrayBuffer) {
-				buffer = new Uint8Array(buffer.buffer);
-			} else {
-				throw new Error('Invalid bufferToURIEncoding buffer');
-			}
-		}
-		var output = '';
-		for (var i = 0; i < buffer.byteLength; ++i) {
-			var hex = buffer[i].toString(16);
-			output += '%' + '00'.substring(0, 2 - hex.length) + hex;
-		}
-		return output;
-	};
-
-	/*
-	** URI ENCODING STRING TO BUFFER
-	**
-	** Return a Uint8Array buffer representing the input URI Encoding string.
-	*/
-	Crypto.URIEncodingToBuffer = function (string) {
-		if (typeof string !== 'string') {
-			throw new Error('Invalid URIEncodingToBuffer string');
-		}
-		var bytes = string.split('%');
-		bytes.shift(); // remove first empty string element
-		var output = new Uint8Array(bytes.length);
-		for (var i = 0; i < output.byteLength; ++i) {
-			output[i] = parseInt(bytes[i], 16);
-		}
-		return output;
-	};
-
-	/*
-	** BUFFER TO BIT STRING
-	**
-	** Return a bit string representing the input buffer.
-	*/
-	Crypto.bufferToBitString = function (buffer) {
-		if (!(buffer instanceof Uint8Array)) {
-			if (buffer instanceof ArrayBuffer) {
-				buffer = new Uint8Array(buffer);
-			} else if (buffer.buffer instanceof ArrayBuffer) {
-				buffer = new Uint8Array(buffer.buffer);
-			} else {
-				throw new Error('Invalid bufferToBitString buffer');
-			}
-		}
-		var output = '';
-		for (var i = 0; i < buffer.byteLength; ++i) {
-			var bit = buffer[i].toString(2);
-			output += '00000000'.substring(0, 8 - bit.length) + bit;
-		}
-		return output;
-	};
-
-	/*
-	** BIT STRING TO BUFFER
-	**
-	** Return a Uint8Array buffer representing the input bit string.
-	*/
-	Crypto.bitStringToBuffer = function (string) {
-		if (typeof string !== 'string') {
-			throw new Error('Invalid bitStringToBuffer string');
-		}
-		var output = new Uint8Array(string.length / 8);
-		for (var i = 0; i < output.byteLength; ++i) {
-			output[i] = parseInt(string.substring(i * 8, i * 8 + 8), 2);
-		}
-		return output;
-	};
-
-	/*
-	** RANDOM PASSWORD
-	*/
-	Crypto.randomPassword = function (passwordLength, charset) {
-		passwordLength = passwordLength || 16;
-		charset = charset || Crypto.DEFAULTCHARSET;
-		var randomBytes = Crypto.randomBuffer(passwordLength), //crypto.getRandomValues(new Uint8Array(passwordLength)),
-			outputString = '';
-		for (var i = 0; i < randomBytes.length; ++i) {
-			outputString += charset.charAt(randomBytes[i] % charset.length);
-		}
-		return outputString;
-	};
-
-	/*
 	** HASH DIGEST
 	**
 	** https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
 	** Supported algorithms: SHA-1, SHA-256, SHA-384, SHA-512
 	**
-	** Crypto.hash('SHA-256', Crypto.stringToBuffer('foobar')).then(function (bufferHash) {
-	**     var hexDigest = Crypto.bufferToHex(bufferHash);
+	** Crypto.hash('SHA-256', Crypto.string_to_buffer('foobar')).then(function (bufferHash) {
+	**     var hexDigest = Crypto.buffer_to_hex(bufferHash);
 	** });
 	*/
-	Crypto.hash = function (algo, buffer) {
-		return (crypto || webkitCrypto || msCrypto).subtle.digest(algo, buffer);
-	};
-
-	/*
-	** GENERATE VAULT PASSWORD
-	*/
-	Crypto.vaultPassword = function (masterPassword, serviceID, passwordLength, charset) {
-		passwordLength = passwordLength || 16;
-		charset = charset || Crypto.DEFAULTCHARSET;
-
-		/*
-		//console.time('vaultPassword');
-		var masterHASH = masterPassword;
-		for (var i = 0; i < 1000; ++i) {
-			masterHASH = CryptoJS.MD5(masterHASH).toString();
-		}
-		var outputString = CryptoJS.MD5(serviceID).toString();
-		for (var i = 0; i < 1000; ++i) {
-			outputString = CryptoJS.MD5(masterHASH + outputString).toString();
-		}
-		//console.timeEnd('vaultPassword');
-		return outputString;
-		*/
-
-		//console.time('vaultPassword');
-		return Promise.all([
-			Crypto.hash('SHA-512', Crypto.stringToBuffer(masterPassword)),
-			Crypto.hash('SHA-512', Crypto.stringToBuffer(serviceID))
-		]).then(function (values) {
-			var masterHashBuffer = new Uint8Array(values[0]),
-				serviceHashBuffer = new Uint8Array(values[1]),
-				mix = new Uint8Array(masterHashBuffer.length + serviceHashBuffer.length);
-			mix.set(masterHashBuffer);
-			mix.set(serviceHashBuffer, masterHashBuffer.length);
-			return Crypto.hash('SHA-512', mix).then(function (mixHashBuffer) {
-				mixHashBuffer = new Uint8Array(mixHashBuffer);
-				var outputString = '';
-				for (var i = 0; i < passwordLength; ++i) {
-					outputString += charset.charAt(mixHashBuffer[i % mixHashBuffer.length] % charset.length);
-				}
-				//console.timeEnd('vaultPassword');
-				return outputString;
-			});
-		});
+	Crypto.hash = function (algorithm, buffer) {
+		return (crypto || webkitCrypto || msCrypto).subtle.digest(algorithm, buffer);
 	};
 
 	/*
@@ -343,7 +170,7 @@
 			} else if (input.buffer instanceof ArrayBuffer) {
 				input = new Uint8Array(input.buffer);
 			} else {
-				throw new Error('Invalid xorcipher input');
+				return null;
 			}
 		}
 		if (!(key instanceof Uint8Array)) {
@@ -352,14 +179,14 @@
 			} else if (key.buffer instanceof ArrayBuffer) {
 				key = new Uint8Array(key.buffer);
 			} else {
-				throw new Error('Invalid xorcipher key');
+				return null;
 			}
 		}
-		var outputBuffer = new Uint8Array(input.byteLength);
+		var output_buffer = new Uint8Array(input.byteLength);
 		for (var i = 0; i < input.byteLength; ++i) {
-			outputBuffer[i] = input[i] ^ key[i % key.byteLength];
+			output_buffer[i] = input[i] ^ key[i % key.byteLength];
 		}
-		return outputBuffer;
+		return output_buffer;
 	};
 
 	if (!window.Quantum) {
