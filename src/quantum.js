@@ -1,10 +1,8 @@
-// Quantum 1.1.0 | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
+// Quantum | Copyright (c) 2017-2019 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
 (function () {
 	'use strict';
 
 	var Quantum = Object.create(null);
-
-	Quantum.version = '1.1.0';
 
 	Quantum.exists = function (item) {
 		try {
