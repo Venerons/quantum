@@ -9,12 +9,12 @@
 	* [guid](#guid)
 	* [require](#require)
 	* [ajax](#ajax)
-	* [isInteger](#isinteger)
-	* [isFloat](#isfloat)
-	* [isHex](#ishex)
-	* [isEmail](#isemail)
-	* [isIPv4](#isipv4)
-	* [isIPv6](#isipv6)
+	* [is_integer](#isinteger)
+	* [is_float](#isfloat)
+	* [is_hex](#ishex)
+	* [is_email](#isemail)
+	* [is_IPv4](#isipv4)
+	* [is_IPv6](#isipv6)
 * [Table](#table)
 	* [table](#table-1)
 		* [Table Settings](#table-settings)
@@ -212,83 +212,83 @@ Quantum.ajax({
 });
 ```
 
-## isInteger
+## is_integer
 
 Returns `true` if the given value is an integer number, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.isInteger(1970)); // true
-console.log(Quantum.isInteger(-1970)); // true
-console.log(Quantum.isInteger(1970.5)); // false
-console.log(Quantum.isInteger(-1970.5)); // false
-console.log(Quantum.isInteger('1970')); // true
-console.log(Quantum.isInteger('-1970')); // true
-console.log(Quantum.isInteger('1970.5')); // false
-console.log(Quantum.isInteger('-1970.5')); // false
-console.log(Quantum.isInteger('hello')); // false
+console.log(Quantum.is_integer(1970)); // true
+console.log(Quantum.is_integer(-1970)); // true
+console.log(Quantum.is_integer(1970.5)); // false
+console.log(Quantum.is_integer(-1970.5)); // false
+console.log(Quantum.is_integer('1970')); // true
+console.log(Quantum.is_integer('-1970')); // true
+console.log(Quantum.is_integer('1970.5')); // false
+console.log(Quantum.is_integer('-1970.5')); // false
+console.log(Quantum.is_integer('hello')); // false
 ```
 
-## isFloat
+## is_float
 
 Returns `true` if the given value is a floating point number, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.isFloat(1970)); // true
-console.log(Quantum.isFloat(-1970)); // true
-console.log(Quantum.isFloat(1970.5)); // true
-console.log(Quantum.isFloat(-1970.5)); // true
-console.log(Quantum.isFloat('1970')); // true
-console.log(Quantum.isFloat('-1970')); // true
-console.log(Quantum.isFloat('1970.5')); // true
-console.log(Quantum.isFloat('-1970.5')); // true
-console.log(Quantum.isFloat('hello')); // false
+console.log(Quantum.is_float(1970)); // true
+console.log(Quantum.is_float(-1970)); // true
+console.log(Quantum.is_float(1970.5)); // true
+console.log(Quantum.is_float(-1970.5)); // true
+console.log(Quantum.is_float('1970')); // true
+console.log(Quantum.is_float('-1970')); // true
+console.log(Quantum.is_float('1970.5')); // true
+console.log(Quantum.is_float('-1970.5')); // true
+console.log(Quantum.is_float('hello')); // false
 ```
 
-## isHex
+## is_hex
 
 Returns `true` if the given value is an hexadecimal value, `false` otherwise. Validates i.e. 12ADff, #12ADff, 0x12ADff
 
 Example:
 
 ```js
-console.log(Quantum.isHex('12ADff')); // true
-console.log(Quantum.isHex('#12ADff')); // true
-console.log(Quantum.isHex(0x12ADff)); // true
-console.log(Quantum.isHex('0x12ADff')); // true
+console.log(Quantum.is_hex('12ADff')); // true
+console.log(Quantum.is_hex('#12ADff')); // true
+console.log(Quantum.is_hex(0x12ADff)); // true
+console.log(Quantum.is_hex('0x12ADff')); // true
 ```
 
-## isEmail
+## is_email
 
 Returns `true` if the given value is a valid email address, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.isEmail('john.doe@gmail.com')); // true
+console.log(Quantum.is_email('john.doe@gmail.com')); // true
 ```
 
-## isIPv4
+## is_IPv4
 
 Returns `true` if the given value is a valid IPv4 address, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.isIPv4('192.168.0.1')); // true
+console.log(Quantum.is_IPv4('192.168.0.1')); // true
 ```
 
-## isIPv6
+## is_IPv6
 
 Returns `true` if the given value is a valid IPv6 address, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.isIPv6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')); // true
+console.log(Quantum.is_IPv6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')); // true
 ```
 
 # Table
