@@ -23,20 +23,13 @@
 	* [update](#update)
 	* [destroy](#destroy)
 * [Crypto](#crypto)
-	* [randomBuffer(bytesNumber)](#randombufferbytesnumber)
-	* [bufferToString(buffer)](#buffertostringbuffer)
-	* [stringToBuffer(string)](#stringtobufferstring)
-	* [bufferToBase64(buffer)](#buffertobase64buffer)
-	* [base64ToBuffer(string)](#base64tobufferstring)
-	* [bufferToHex(buffer)](#buffertohexbuffer)
-	* [hexToBuffer(string)](#hextobufferstring)
-	* [bufferToURIEncoding(buffer)](#buffertouriencodingbuffer)
-	* [URIEncodingToBuffer(string)](#uriencodingtobufferstring)
-	* [bufferToBitString(buffer)](#buffertobitstringbuffer)
-	* [bitStringToBuffer(string)](#bitstringtobufferstring)
-	* [randomPassword(passwordLength, charset)](#randompasswordpasswordlength-charset)
-	* [hash(algo, buffer)](#hashalgo-buffer)
-	* [vaultPassword(masterPassword, serviceID, passwordLength, charset)](#vaultpasswordmasterpassword-serviceid-passwordlength-charset)
+	* [random_buffer(bytes_number)](#random_bufferbytes_number)
+	* [random_password(length, charset)](#random_passwordlength-charset)
+	* [buffer_to_string(buffer)](#buffer_to_stringbuffer)
+	* [string_to_buffer(string)](#string_to_bufferstring)
+	* [buffer_to_hex(buffer)](#buffer_to_hexbuffer)
+	* [hex_to_buffer(string)](#hex_to_bufferstring)
+	* [hash(algorithm, buffer)](#hashalgorithm-buffer)
 	* [xorcipher(input, key)](#xorcipherinput-key)
 
 # Core
@@ -429,75 +422,47 @@ In order to use this module you need to include the `quantum.crypto.js` file. Be
 <script src="quantum.crypto.js"></script>
 ```
 
-## randomBuffer(bytesNumber)
+## random_buffer(bytes_number)
 
-Return a Uint8Array of `bytesNumber` length filled with random values. Useful to generate salts, random keys, etc. The maximum allowed as `bytesNumber` is `65536`.
+Return a Uint8Array of `bytes_number` length filled with random values. Useful to generate salts, random keys, etc. The maximum allowed as `bytes_number` is `65536`.
 
 Example:
 
 ```js
-console.log(Quantum.crypto.randomBuffer(128));
+console.log(Quantum.crypto.random_buffer(128));
 ```
 
-## bufferToString(buffer)
+## random_password(length, charset)
+
+Returns a random password of the given `length` (default 16) with characters taken from the given `charset` (default `Quantum.crypto.DEFAULTCHARSET`).
+
+## buffer_to_string(buffer)
 
 Return a string representing the input buffer.
 
-## stringToBuffer(string)
+## string_to_buffer(string)
 
 Return a Uint8Array buffer representing the input string.
 
-## bufferToBase64(buffer)
-
-Return a base64 string representing the input buffer.
-
-## base64ToBuffer(string)
-
-Return a Uint8Array buffer representing the input base64 string.
-
-## bufferToHex(buffer)
+## buffer_to_hex(buffer)
 
 Return a hex string representing the input buffer.
 
-## hexToBuffer(string)
+## hex_to_buffer(string)
 
 Return a Uint8Array buffer representing the input hex string.
 
-## bufferToURIEncoding(buffer)
-
-Return a URI Encoding string representing the input buffer.
-
-## URIEncodingToBuffer(string)
-
-Return a Uint8Array buffer representing the input URI Encoding string.
-
-## bufferToBitString(buffer)
-
-Return a bit string representing the input buffer.
-
-## bitStringToBuffer(string)
-
-Return a Uint8Array buffer representing the input bit string.
-
-## randomPassword(passwordLength, charset)
-
-Returns a random password of the given `passwordLength` length (default 16) with characters taken from the given `charset` (default `Quantum.crypto.DEFAULTCHARSET`).
-
-## hash(algo, buffer)
+## hash(algorithm, buffer)
 
 Returns a promise with the hash digest of the given buffer. Supported algorithms: SHA-1, SHA-256, SHA-384, SHA-512
 
 Example:
 
 ```js
-Quantum.crypto.hash('SHA-256', Quantum.crypto.stringToBuffer('foobar')).then(function (bufferHash) {
-    var hexDigest = Quantum.crypto.bufferToHex(bufferHash);
+Quantum.crypto.hash('SHA-256', Quantum.crypto.string_to_buffer('foobar')).then(function (buffer_hash) {
+    var hex_digest = Quantum.crypto.buffer_to_hex(buffer_hash);
 });
 ```
-
-## vaultPassword(masterPassword, serviceID, passwordLength, charset)
-
-TODO
 
 ## xorcipher(input, key)
 
