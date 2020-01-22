@@ -106,8 +106,10 @@
 						return chainSort(index + 1, a, b);
 					}
 				} else {
-					var ret = s.direction(a, b);
-					if (ret === 0) {
+					var ret = s.direction(a[s.field], b[s.field]);
+					if (ret !== 0) {
+						return ret;
+					} else {
 						return chainSort(index + 1, a, b);
 					}
 				}
@@ -171,9 +173,10 @@
 					}
 					tr.appendChild(td);
 				});
-				if (q.settings.onRowClick) {
+				var row_click_func = q.settings.on_row_click || q.settings.onRowClick;
+				if (row_click_func) {
 					tr.addEventListener('click', function () {
-						q.settings.onRowClick.call(q, record, tr);
+						row_click_func.call(q, record, tr);
 					}, false);
 				}
 				tbody.appendChild(tr);
@@ -210,8 +213,9 @@
 			}
 		}
 
-		if (q.settings.onRenderCompleted) {
-			q.settings.onRenderCompleted.call(q);
+		var render_completed_func = q.settings.on_render_completed || q.settings.onRenderCompleted;
+		if (render_completed_func) {
+			render_completed_func.call(q);
 		}
 		return q;
 	};
