@@ -1,60 +1,8 @@
-# Table of Contents
+# Quantum.utils
 
-* [Core](#core)
-	* [exists](#exists)
-	* [log](#log)
-	* [error](#error)
-	* [query](#query)
-	* [type](#type)
-	* [guid](#guid)
-	* [require](#require)
-	* [ajax](#ajax)
-	* [is_integer](#is_integer)
-	* [is_float](#is_float)
-	* [is_hex](#is_hex)
-	* [is_email](#is_email)
-	* [is_IPv4](#is_ipv4)
-	* [is_IPv6](#is_ipv6)
-* [Table](#table)
-	* [table](#table-1)
-		* [Table Settings](#table-settings)
-		* [Columns Settings](#columns-settings)
-		* [Table Example](#table-example)
-	* [update](#update)
-	* [destroy](#destroy)
-* [Crypto](#crypto)
-	* [random_buffer(bytes_number)](#random_bufferbytes_number)
-	* [random_password(length, charset)](#random_passwordlength-charset)
-	* [buffer_to_string(buffer)](#buffer_to_stringbuffer)
-	* [string_to_buffer(string)](#string_to_bufferstring)
-	* [buffer_to_hex(buffer)](#buffer_to_hexbuffer)
-	* [hex_to_buffer(string)](#hex_to_bufferstring)
-	* [hash(algorithm, buffer)](#hashalgorithm-buffer)
-	* [xorcipher(input, key)](#xorcipherinput-key)
+Quantum Utils is a module that contains many useful functions.
 
-# Core
-
-Just include or load the `quantum.js` file to load the core features. You can do directly on your HTML page by doing so:
-
-```html
-<script src="quantum.js"></script>
-```
-
-## exists
-
-Returns `true` if the item is not `null` or `undefined`, `false` otherwise.
-
-Example:
-
-```js
-var a = {
-	prop1: 'stringvalue'
-};
-console.log(Quantum.exists(a.prop1)); // true
-console.log(Quantum.exists(a.prop2)); // false
-```
-
-## log
+## Quantum.utils.log
 
 Show a log on the Browser's Javascript Console, styled based on the given level. Levels are `debug`, `info`, `warn`, `error`. If the first parameter is not a valid level, then a simple unstyled log is shown.
 
@@ -62,11 +10,11 @@ Example:
 
 ```js
 var myfunc = function (a, b, c) {
-	Quantum.log('debug', 'myfunc', a, b, c);
+	Quantum.utils.log('debug', 'myfunc', a, b, c);
 };
 ```
 
-## error
+## Quantum.utils.error
 
 Show a log on the browser's JavaScript console with detailed infos on the given error.
 
@@ -76,7 +24,7 @@ Example 1:
 try {
 	// some code
 } catch (e) {
-	Quantum.error(e, 'Oh no! An error!');
+	Quantum.utils.error(e, 'Oh no! An error!');
 }
 ```
 
@@ -96,48 +44,28 @@ window.onerror = function (message, filename, lineno, colno, error) {
 			columnNumber: colno
 		};
 	}
-	Quantum.error(error, 'Uncatched Exception');
+	Quantum.utils.error(error, 'Uncatched Exception');
 };
 ```
 
-## query
-
-Return a NodeList with the elements that matches the given CSS selector.
-
-Example:
-
-```js
-var items = Quantum.query('.item');
-```
-
-## type
-
-Returns the given object's type.
-
-Example:
-
-```js
-console.log(Quantum.type('this is a string')); // "String"
-```
-
-## guid
+## Quantum.utils.guid
 
 Returns a random GUID, useful for identify objects and elements.
 
 Example:
 
 ```js
-console.log(Quantum.guid()); // i.e. "1db1fef5-5e88-46d7-8a71-5a5c9d7ae880"
+console.log(Quantum.utils.guid()); // i.e. "1db1fef5-5e88-46d7-8a71-5a5c9d7ae880"
 ```
 
-## require
+## Quantum.utils.require
 
 Load and execute CSS and JavaScript files. Files are loaded and executed in the given order, unless you use `async` or `defer` options. You can assign a function to be executed after every single script is loaded or when all scripts are loaded.
 
 Example:
 
 ```js
-Quantum.require({
+Quantum.utils.require({
 	scripts: [
 		{
 			type: 'css',
@@ -178,124 +106,94 @@ Quantum.require({
 });
 ```
 
-## ajax
+# Quantum.validate
 
-Execute an AJAX (XMLHttpRequest) request.
+Quantum Validate is a module that contains many validation functions.
 
-Note:
-
-- url is mandatory
-- HTMLFormElement as data only if type == 'POST' and contentType == 'multipart/form-data'
-- if resonseType == 'json', the response will be the JSON already parsed
-
-Example:
-
-```js
-Quantum.ajax({
-	type: <'GET' || 'POST'>,
-	url: <string>,
-	async: <true || false>,
-	contentType: <'application/x-www-form-urlencoded' || 'text/plain' || 'multipart/form-data'>,
-	data: <string || object || HTMLFormElement>,
-	responseType: <'text' || 'json' || 'document' || 'arraybuffer' || 'blob'>,
-	uploadProgress: <function(percentage)>,
-	progress: <function(percentage)>,
-	success: <function(response)>,
-	error: <function(error)>
-});
-```
-
-## is_integer
+## Quantum.validate.integer
 
 Returns `true` if the given value is an integer number, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.is_integer(1970)); // true
-console.log(Quantum.is_integer(-1970)); // true
-console.log(Quantum.is_integer(1970.5)); // false
-console.log(Quantum.is_integer(-1970.5)); // false
-console.log(Quantum.is_integer('1970')); // true
-console.log(Quantum.is_integer('-1970')); // true
-console.log(Quantum.is_integer('1970.5')); // false
-console.log(Quantum.is_integer('-1970.5')); // false
-console.log(Quantum.is_integer('hello')); // false
+console.log(Quantum.validate.integer(1970)); // true
+console.log(Quantum.validate.integer(-1970)); // true
+console.log(Quantum.validate.integer(1970.5)); // false
+console.log(Quantum.validate.integer(-1970.5)); // false
+console.log(Quantum.validate.integer('1970')); // true
+console.log(Quantum.validate.integer('-1970')); // true
+console.log(Quantum.validate.integer('1970.5')); // false
+console.log(Quantum.validate.integer('-1970.5')); // false
+console.log(Quantum.validate.integer('hello')); // false
 ```
 
-## is_float
+## Quantum.validate.float
 
 Returns `true` if the given value is a floating point number, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.is_float(1970)); // true
-console.log(Quantum.is_float(-1970)); // true
-console.log(Quantum.is_float(1970.5)); // true
-console.log(Quantum.is_float(-1970.5)); // true
-console.log(Quantum.is_float('1970')); // true
-console.log(Quantum.is_float('-1970')); // true
-console.log(Quantum.is_float('1970.5')); // true
-console.log(Quantum.is_float('-1970.5')); // true
-console.log(Quantum.is_float('hello')); // false
+console.log(Quantum.validate.float(1970)); // true
+console.log(Quantum.validate.float(-1970)); // true
+console.log(Quantum.validate.float(1970.5)); // true
+console.log(Quantum.validate.float(-1970.5)); // true
+console.log(Quantum.validate.float('1970')); // true
+console.log(Quantum.validate.float('-1970')); // true
+console.log(Quantum.validate.float('1970.5')); // true
+console.log(Quantum.validate.float('-1970.5')); // true
+console.log(Quantum.validate.float('hello')); // false
 ```
 
-## is_hex
+## Quantum.validate.hex
 
 Returns `true` if the given value is an hexadecimal value, `false` otherwise. Validates i.e. 12ADff, #12ADff, 0x12ADff
 
 Example:
 
 ```js
-console.log(Quantum.is_hex('12ADff')); // true
-console.log(Quantum.is_hex('#12ADff')); // true
-console.log(Quantum.is_hex(0x12ADff)); // true
-console.log(Quantum.is_hex('0x12ADff')); // true
+console.log(Quantum.validate.hex('12ADff')); // true
+console.log(Quantum.validate.hex('#12ADff')); // true
+console.log(Quantum.validate.hex(0x12ADff)); // true
+console.log(Quantum.validate.hex('0x12ADff')); // true
 ```
 
-## is_email
+## Quantum.validate.email
 
 Returns `true` if the given value is a valid email address, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.is_email('john.doe@gmail.com')); // true
+console.log(Quantum.validate.email('john.doe@gmail.com')); // true
 ```
 
-## is_IPv4
+## Quantum.validate.ipv4
 
 Returns `true` if the given value is a valid IPv4 address, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.is_IPv4('192.168.0.1')); // true
+console.log(Quantum.validate.ipv4('192.168.0.1')); // true
 ```
 
-## is_IPv6
+## Quantum.validate.ipv6
 
 Returns `true` if the given value is a valid IPv6 address, `false` otherwise.
 
 Example:
 
 ```js
-console.log(Quantum.is_IPv6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')); // true
+console.log(Quantum.validate.ipv6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')); // true
 ```
 
-# Table
+# Quantum.table
 
 Quantum Table is a module that let you create standard HTML5 tables with ease.
 
-In order to use this module you need to include the `quantum.table.js` file. Be aware that you need to load the core module first to use this module.
-
-```html
-<script src="quantum.js"></script>
-<script src="quantum.table.js"></script>
-```
-
-## table
+## Quantum.table
 
 Create and render a table, and returns an object that let you update it later. The first parameter can be either a CSS3 selector (i.e. `'#my-table'`) that resolves to a `<table>` element, or directly an `HTMLTableElement` element. The second parameter is an object that contains all the settings of the table. You can find documentation about settings on the **Table Settings** section.
 
@@ -303,14 +201,14 @@ Examples:
 
 ```js
 // selector resolves to a <table> element, given that an element like <table id="my-table"></table> exists.
-var qt = Quantum.table('#my-table', { ... });
+const qt = Quantum.table('#my-table', { ... });
 
 // selector is an HTMLTableElement element, given that an element like <table id="my-table"></table> exists.
-var qt = Quantum.table(document.getElementById('my-table'), { ... });
+const qt = Quantum.table(document.getElementById('my-table'), { ... });
 
 // selector is an HTMLTableElement element created on the fly, rendered on memory and then later added to the DOM.
-var table = document.createElement('table');
-var qt = Quantum.table(table, { ... });
+const table = document.createElement('table');
+const qt = Quantum.table(table, { ... });
 document.body.appendChild(table);
 ```
 
@@ -342,7 +240,7 @@ render  | `<function>`             | Optional. Custom function to render each ce
 ### Table Example
 
 ```js
-var qt = Quantum.table('#my-table', {
+const qt = Quantum.table('#my-table', {
 	width: 400, // same as '400px'
 	height: 200, // same as '200px'
 	caption: 'Teams',
@@ -383,11 +281,11 @@ var qt = Quantum.table('#my-table', {
 		{ field: 'lastname', direction: 'desc' },  // and then by lastname
 		{ field: 'id', direction: function (a, b) { return a < b ? -1 : 1; } } // finally sort by id using the given function
 	],
-	onRowClick: function (record, tr) {
-		Quantum.log('debug', 'Quantum Table', 'onRowClick', record, tr);
+	on_row_click: function (record, tr) {
+		Quantum.utils.log('debug', 'Quantum.table', 'on_row_click', record, tr);
 	},
-	onRenderCompleted: function () {
-		Quantum.log('debug', 'Quantum Table', 'onRenderCompleted');
+	on_render_completed: function () {
+		Quantum.utils.log('debug', 'Quantum.table', 'on_render_completed');
 	}
 });
 ```
@@ -399,7 +297,7 @@ The update method let you change or add some of the settings of the table and re
 Example:
 
 ```js
-var qt = Quantum.table('#my-table', {
+const qt = Quantum.table('#my-table', {
 	width: 400,
 	// other settings here
 });
@@ -411,18 +309,11 @@ qt.update({ width: 500 });
 
 Destroy the table, that will leave the original table element empty.
 
-# Crypto
+# Quantum.crypto
 
-Quantum Crypto is a module that provides useful cryptographic functions and binary data manipulation.
+Quantum Crypto is a module that contains many crypto functions.
 
-In order to use this module you need to include the `quantum.crypto.js` file. Be aware that you need to load the core module first to use this module.
-
-```html
-<script src="quantum.js"></script>
-<script src="quantum.crypto.js"></script>
-```
-
-## random_buffer(bytes_number)
+## Quantum.crypto.random_buffer(bytes_number)
 
 Return a Uint8Array of `bytes_number` length filled with random values. Useful to generate salts, random keys, etc. The maximum allowed as `bytes_number` is `65536`.
 
@@ -432,27 +323,27 @@ Example:
 console.log(Quantum.crypto.random_buffer(128));
 ```
 
-## random_password(length, charset)
+## Quantum.crypto.random_password(length, charset)
 
 Returns a random password of the given `length` (default 16) with characters taken from the given `charset` (default `Quantum.crypto.DEFAULTCHARSET`).
 
-## buffer_to_string(buffer)
+## Quantum.crypto.buffer_to_string(buffer)
 
 Return a string representing the input buffer.
 
-## string_to_buffer(string)
+## Quantum.crypto.string_to_buffer(string)
 
 Return a Uint8Array buffer representing the input string.
 
-## buffer_to_hex(buffer)
+## Quantum.crypto.buffer_to_hex(buffer)
 
 Return a hex string representing the input buffer.
 
-## hex_to_buffer(string)
+## Quantum.crypto.hex_to_buffer(string)
 
 Return a Uint8Array buffer representing the input hex string.
 
-## hash(algorithm, buffer)
+## Quantum.crypto.hash(algorithm, buffer)
 
 Returns a promise with the hash digest of the given buffer. Supported algorithms: SHA-1, SHA-256, SHA-384, SHA-512
 
@@ -460,16 +351,15 @@ Example:
 
 ```js
 Quantum.crypto.hash('SHA-256', Quantum.crypto.string_to_buffer('foobar')).then(function (buffer_hash) {
-    var hex_digest = Quantum.crypto.buffer_to_hex(buffer_hash);
+    const hex_digest = Quantum.crypto.buffer_to_hex(buffer_hash);
 });
 ```
 
-## xorcipher(input, key)
+## Quantum.crypto.xorcipher(input, key)
 
 Return a Uint8Array representing the input xor key. The xor is applied on each byte (8bit) of the input using the corresponding byte of the key (the key is circular).
 
 ```js
-var encrypted = Quantum.crypto.xorcipher(Quantum.crypto.stringToBuffer('My secret message'), Quantum.crypto.stringToBuffer('My secret key'));
-
-var decrypted = Quantum.crypto.xorcipher(encrypted, Quantum.crypto.stringToBuffer('My secret key'));
+const encrypted = Quantum.crypto.xorcipher(Quantum.crypto.string_to_buffer('My secret message'), Quantum.crypto.string_to_buffer('My secret key'));
+const decrypted = Quantum.crypto.xorcipher(encrypted, Quantum.crypto.string_to_buffer('My secret key'));
 ```
