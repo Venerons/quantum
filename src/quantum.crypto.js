@@ -1,52 +1,34 @@
-// Quantum | Copyright (c) 2017-2020 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
+// Quantum Crypto
+// Copyright (c) 2017 – 2022 Daniele Veneroni. All rights reserved.
+// Licensed under the MIT License (X11 License)
 (function () {
-	'use strict';
 	
-	var Crypto = Object.create(null);
+	var QuantumCrypto = Object.create(null);
 
-	/*
-	** CHARSETS
-	*/
-	Crypto.ALPHA_LOWER = 'abcdefghijklmnopqrstuvwxyz';
-	Crypto.ALPHA_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	Crypto.NUMBERS = '0123456789';
-	Crypto.DASH = '-';
-	Crypto.SYMBOLS = '!"#$%&\'()*+,./:;<=>?@[\\]^_`{|}~';
-	Crypto.SPACE = ' ';
-	Crypto.DEFAULTCHARSET = Crypto.ALPHA_LOWER.concat(Crypto.ALPHA_UPPER).concat(Crypto.NUMBERS).concat(Crypto.DASH).concat(Crypto.SYMBOLS);
+	QuantumCrypto.ALPHA_LOWER = 'abcdefghijklmnopqrstuvwxyz';
+	QuantumCrypto.ALPHA_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	QuantumCrypto.NUMBERS = '0123456789';
+	QuantumCrypto.DASH = '-';
+	QuantumCrypto.SYMBOLS = '!"#$%&\'()*+,./:;<=>?@[\\]^_`{|}~';
+	QuantumCrypto.SPACE = ' ';
 
-	/*
-	** RANDOM DATA BUFFER
-	**
-	** Return a Uint8Array of bytes_number length filled with random values.
-	** Useful to generate salts, random keys, etc.
-	** The maximum allowed as bytes_number is 65536.
-	*/
-	Crypto.random_buffer = function (bytes_number) {
+	QuantumCrypto.random_buffer = function (bytes_number) {
 		return (crypto || webkitCrypto || msCrypto).getRandomValues(new Uint8Array(bytes_number || 512));
 	};
 
-	/*
-	** RANDOM PASSWORD
-	*/
-	Crypto.random_password = function (length, charset) {
+	QuantumCrypto.random_password = function (length, charset) {
 		length = length || 16;
-		charset = charset || Crypto.DEFAULTCHARSET;
-		var random_bytes = Crypto.random_buffer(length),
-			output_string = [];
-		for (var i = 0; i < random_bytes.length; ++i) {
+		charset = charset || QuantumCrypto.ALPHA_LOWER.concat(QuantumCrypto.ALPHA_UPPER).concat(QuantumCrypto.NUMBERS).concat(QuantumCrypto.DASH).concat(QuantumCrypto.SYMBOLS);
+		const random_bytes = QuantumCrypto.random_buffer(length);
+		const output_string = [];
+		for (let i = 0; i < random_bytes.length; ++i) {
 			output_string.push(charset.charAt(random_bytes[i] % charset.length));
 		}
 		return output_string.join('');
 	};
 
-	/*
-	** BUFFER TO STRING
-	**
-	** Return a string representing the input buffer.
-	*/
-	Crypto.buffer_to_string = function (buffer, encoding) {
-		var data_view;
+	QuantumCrypto.buffer_to_string = function (buffer, encoding) {
+		let data_view;
 		if (buffer instanceof ArrayBuffer) {
 			data_view = new DataView(buffer);
 		} else if (buffer.buffer instanceof ArrayBuffer) {
@@ -55,7 +37,7 @@
 			return null;
 		}
 		if ('TextDecoder' in window) {
-			var decoder = new TextDecoder(encoding || 'utf-8');
+			const decoder = new TextDecoder(encoding || 'utf-8');
 			return decoder.decode(data_view);
 		} else if (String.fromCodePoint) {
 			return String.fromCodePoint.apply(null, buffer);
@@ -65,43 +47,33 @@
 		return null;
 	};
 
-	/*
-	** STRING TO BUFFER
-	**
-	** Return a Uint8Array buffer representing the input string.
-	*/
-	Crypto.string_to_buffer = function (string, encoding) {
+	QuantumCrypto.string_to_buffer = function (string, encoding) {
 		if (typeof string !== 'string') {
 			return null;
 		}
 		if ('TextEncoder' in window) {
-			var encoder = new TextEncoder(encoding || 'utf-8');
+			const encoder = new TextEncoder(encoding || 'utf-8');
 			return encoder.encode(string);
 		} else if (String.fromCodePoint) {
-			var buffer = new ArrayBuffer(string.length * 2), // 2 bytes for each char
-				buffer_view = new Uint16Array(buffer);
-			for (var i = 0; i < string.length; ++i) {
+			const buffer = new ArrayBuffer(string.length * 2); // 2 bytes for each char
+			const buffer_view = new Uint16Array(buffer);
+			for (let i = 0; i < string.length; ++i) {
 				buffer_view[i] = string.codePointAt(i);
 			}
 			return new Uint8Array(buffer);
 		} else if (String.fromCharCode) {
-			var buffer = new ArrayBuffer(string.length * 2), // 2 bytes for each char
-				bufferView = new Uint16Array(buffer);
-			for (var i = 0; i < string.length; ++i) {
-				bufferView[i] = string.charCodeAt(i);
+			const buffer = new ArrayBuffer(string.length * 2); // 2 bytes for each char
+			const buffer_view = new Uint16Array(buffer);
+			for (let i = 0; i < string.length; ++i) {
+				buffer_view[i] = string.charCodeAt(i);
 			}
 			return new Uint8Array(buffer);
 		}
 		return null;
 	};
 
-	/*
-	** BUFFER TO HEX STRING
-	**
-	** Return a hex string representing the input buffer.
-	*/
-	Crypto.buffer_to_hex = function (buffer) {
-		//var array = Array.from(new Uint8Array(buffer));
+	QuantumCrypto.buffer_to_hex = function (buffer) {
+		//const array = Array.from(new Uint8Array(buffer));
 		//return array.map(b => b.toString(16).padStart(2, '0')).join('');
 		if (!(buffer instanceof ArrayBuffer)) {
 			if (buffer.buffer instanceof ArrayBuffer) {
@@ -110,60 +82,39 @@
 				return null;
 			}
 		}
-		var view = new DataView(buffer),
-			output = [];
+		const view = new DataView(buffer);
+		const output = [];
 		if (view.byteLength % 4 === 0) {
 			// using Uint32
-			for (var i = 0; i < view.byteLength; i += 4) {
+			for (let i = 0; i < view.byteLength; i += 4) {
 				output.push(view.getUint32(i).toString(16).padStart(8, '0'));
 			}
 		} else {
 			// using Uint8
-			for (var i = 0; i < view.byteLength; ++i) {
+			for (let i = 0; i < view.byteLength; ++i) {
 				output.push(view.getUint8(i).toString(16).padStart(2, '0'));
 			}
 		}
 		return output.join('');
 	};
 
-	/*
-	** HEX STRING TO BUFFER
-	**
-	** Return a Uint8Array buffer representing the input hex string.
-	*/
-	Crypto.hex_to_buffer = function (string) {
+	QuantumCrypto.hex_to_buffer = function (string) {
 		if (typeof string !== 'string') {
 			return null;
 		}
-		var output = new Uint8Array(string.length / 2);
-		for (var i = 0; i < output.byteLength; ++i) {
+		const output = new Uint8Array(string.length / 2);
+		for (let i = 0; i < output.byteLength; ++i) {
 			output[i] = parseInt(string.substring(i * 2, i * 2 + 2), 16);
 		}
 		return output;
 	};
 
-	/*
-	** HASH DIGEST
-	**
-	** https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
-	** Supported algorithms: SHA-1, SHA-256, SHA-384, SHA-512
-	**
-	** Crypto.hash('SHA-256', Crypto.string_to_buffer('foobar')).then(function (bufferHash) {
-	**     var hexDigest = Crypto.buffer_to_hex(bufferHash);
-	** });
-	*/
-	Crypto.hash = function (algorithm, buffer) {
+	// supported algorithms: SHA-1, SHA-256, SHA-384, SHA-512
+	QuantumCrypto.hash = function (algorithm, buffer) {
 		return (crypto || webkitCrypto || msCrypto).subtle.digest(algorithm, buffer);
 	};
 
-	/*
-	** XORCIPHER
-	**
-	** Return a Uint8Array representing the input xor key.
-	** The xor is applied on each byte (8bit) of the input using
-	** the corresponding byte of the key (the key is circular).
-	*/
-	Crypto.xorcipher = function(input, key) {
+	QuantumCrypto.xorcipher = function(input, key) {
 		if (!(input instanceof Uint8Array)) {
 			if (input instanceof ArrayBuffer) {
 				input = new Uint8Array(input);
@@ -182,8 +133,8 @@
 				return null;
 			}
 		}
-		var output_buffer = new Uint8Array(input.byteLength);
-		for (var i = 0; i < input.byteLength; ++i) {
+		const output_buffer = new Uint8Array(input.byteLength);
+		for (let i = 0; i < input.byteLength; ++i) {
 			output_buffer[i] = input[i] ^ key[i % key.byteLength];
 		}
 		return output_buffer;
@@ -192,5 +143,5 @@
 	if (!window.Quantum) {
 		window.Quantum = Object.create(null);
 	}
-	window.Quantum.crypto = Crypto;
+	window.Quantum.crypto = QuantumCrypto;
 })();
