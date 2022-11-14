@@ -1,9 +1,10 @@
-// Quantum | Copyright (c) 2017-2020 Daniele Veneroni | Blue Oak Model License 1.0.0 | https://github.com/Venerons/quantum
+// Quantum Table
+// Copyright (c) 2017 – 2022 Daniele Veneroni. All rights reserved.
+// Licensed under the MIT License (X11 License)
 (function () {
-	'use strict';
 
 	function QuantumTable(selector, settings) {
-		var q = this;
+		const q = this;
 		if (!(this instanceof QuantumTable)) {
 			return new QuantumTable(selector, settings);
 		} else {
@@ -13,15 +14,14 @@
 				q.element = selector;
 			}
 			q.settings = settings;
-			q._render();
+			q.render();
 			return q;
 		}
 	}
 
-	QuantumTable.prototype._render = function () {
-		var q = this;
-
-		var caption, colgroup, thead, tbody, tfoot;
+	QuantumTable.prototype.render = function () {
+		const q = this;
+		let caption, colgroup, thead, tbody, tfoot;
 
 		// CAPTION
 		if (q.settings.caption) {
@@ -33,7 +33,7 @@
 		/*
 		colgroup = document.createElement('colgroup');
 		q.settings.columns.forEach(function (column) {
-			var col = document.createElement('col');
+			const col = document.createElement('col');
 			if (column.size) {
 				col.style.width = typeof column.size === 'number' ? column.size + 'px' : column.size;
 			}
@@ -42,10 +42,10 @@
 		*/
 
 		// THEAD
-		var tr;
+		let tr;
 		q.settings.columns.forEach(function (column) {
 			if (column.caption || column.hidden) {
-				var th = document.createElement('th');
+				const th = document.createElement('th');
 				if (column.caption) {
 					th.textContent = column.caption;
 				}
@@ -68,12 +68,12 @@
 
 		// TBODY
 		tbody = document.createElement('tbody');
-		var groups = {};
+		const groups = {};
 		if (!q.settings.group) {
 			groups['undefined'] = q.settings.records;
 		} else {
 			q.settings.records.forEach(function (record) {
-				var g = record[q.settings.group.field];
+				let g = record[q.settings.group.field];
 				if (g === null || g === undefined) {
 					g = 'undefined';
 				}
@@ -86,7 +86,7 @@
 
 		if (q.settings.sort) {
 			var chainSort = function (index, a, b) {
-				var s = q.settings.sort[index];
+				const s = q.settings.sort[index];
 				if (!s) {
 					return 0;
 				} else if (s.direction === 'asc') {
@@ -106,7 +106,7 @@
 						return chainSort(index + 1, a, b);
 					}
 				} else {
-					var ret = s.direction(a[s.field], b[s.field]);
+					const ret = s.direction(a[s.field], b[s.field]);
 					if (ret !== 0) {
 						return ret;
 					} else {
@@ -115,14 +115,14 @@
 				}
 			};
 			Object.keys(groups).forEach(function (groupID) {
-				var group = groups[groupID];
+				const group = groups[groupID];
 				group.sort(function (a, b) {
 					return chainSort(0, a, b);
 				});
 			});
 		}
 
-		var array;
+		let array;
 		if (q.settings.group && q.settings.group.sort) {
 			if (q.settings.group.sort === 'asc') {
 				array = Object.keys(groups).sort(function (a, b) { return a < b ? -1 : 1; });
@@ -135,10 +135,10 @@
 			array = Object.keys(groups);
 		}
 		array.forEach(function (groupID) {
-			var group = groups[groupID];
+			const group = groups[groupID];
 			if (q.settings.group) {
-				var tr = document.createElement('tr'),
-					td = document.createElement('td');
+				const tr = document.createElement('tr');
+				const td = document.createElement('td');
 				td.setAttribute('colspan', q.settings.columns.length);
 				try {
 					td.dataset.quantumGroup = typeof groupID === 'string' ? groupID : JSON.stringify(groupID); // data-quantum-group
@@ -152,16 +152,16 @@
 				tbody.appendChild(tr);
 			}
 			group.forEach(function (record) {
-				var tr = document.createElement('tr');
+				const tr = document.createElement('tr');
 				q.settings.columns.forEach(function (column) {
-					var td = document.createElement('td');
+					const td = document.createElement('td');
 					if (column.style) {
 						td.setAttribute('style', column.style); // td.style = column.style;
 					}
 					if (column.hidden) {
 						td.hidden = true; // td.setAttribute('hidden', true);
 					}
-					var value = record[column.field];
+					const value = record[column.field];
 					try {
 						td.dataset.quantumField = column.field; // data-quantum-field
 						td.dataset.quantumValue = typeof value === 'string' ? value : JSON.stringify(value); // data-quantum-value
@@ -173,7 +173,7 @@
 					}
 					tr.appendChild(td);
 				});
-				var row_click_func = q.settings.on_row_click || q.settings.onRowClick;
+				const row_click_func = q.settings.on_row_click || q.settings.onRowClick;
 				if (row_click_func) {
 					tr.addEventListener('click', function () {
 						row_click_func.call(q, record, tr);
@@ -187,7 +187,7 @@
 		//tfoot = document.createElement('tfoot');
 		// TODO
 
-		var element = q.element || document.querySelector(q.selector);
+		const element = q.element || document.querySelector(q.selector);
 		if (element) {
 			q.destroy();
 			if (q.settings.width) {
@@ -213,7 +213,7 @@
 			}
 		}
 
-		var render_completed_func = q.settings.on_render_completed || q.settings.onRenderCompleted;
+		const render_completed_func = q.settings.on_render_completed || q.settings.onRenderCompleted;
 		if (render_completed_func) {
 			render_completed_func.call(q);
 		}
@@ -221,19 +221,19 @@
 	};
 
 	QuantumTable.prototype.update = function (settings) {
-		var q = this;
+		const q = this;
 		if (settings) {
 			Object.keys(settings).forEach(function (prop) {
 				q.settings[prop] = settings[prop];
 			});
-			q._render();
+			q.render();
 		}
 		return q;
 	};
 
 	QuantumTable.prototype.destroy = function () {
-		var q = this,
-			element = q.element || document.querySelector(q.selector);
+		const q = this;
+		const element = q.element || document.querySelector(q.selector);
 		if (element) {
 			try {
 				while (element.firstChild) {
