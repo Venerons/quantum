@@ -10,6 +10,18 @@ For each library you need, add the script to your page:
 <script src="quantum.validate.js"></script>
 ```
 
+You can also use jsDelivr as CDN if you prefer:
+
+```html
+<!-- latest relase -->
+<script src="https://cdn.jsdelivr.net/gh/Venerons/quantum/src/quantum.table.min.js"></script>
+
+<!-- tagged relase -->
+<script src="https://cdn.jsdelivr.net/gh/Venerons/quantum@2.0.0/src/quantum.table.min.js"></script>
+```
+
+[![](https://data.jsdelivr.com/v1/package/gh/Venerons/quantum/badge)](https://www.jsdelivr.com/package/gh/Venerons/quantum) [Click here to configure your CDN link](https://www.jsdelivr.com/package/gh/Venerons/quantum?path=src).
+
 Then use the functions you need. Each library adds a module under `Quantum.<module_name>`:
 
 ```js
