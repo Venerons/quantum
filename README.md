@@ -1,5 +1,9 @@
 # Quantum
 
+![](https://img.shields.io/github/license/Venerons/quantum?style=for-the-badge)
+![](https://img.shields.io/github/v/release/Venerons/quantum?style=for-the-badge)
+![](https://img.shields.io/github/issues/Venerons/quantum?style=for-the-badge)
+
 Quantum is a suite of JavaScript libraries.
 
 ## Usage
