@@ -42,7 +42,7 @@ if (Quantum.validate.email(my_email) {
 }
 ```
 
-[DOCUMENTATION](docs.md). 
+[DOCUMENTATION](docs.md)
 
 ## Licensing
 
