@@ -6,6 +6,13 @@
 
 Quantum is a suite of JavaScript libraries.
 
+## Libraries
+
+![](https://img.shields.io/github/size/Venerons/quantum/src/quantum.utils.js?label=utils&style=for-the-badge)
+![](https://img.shields.io/github/size/Venerons/quantum/src/quantum.validate.js?label=validate&style=for-the-badge)
+![](https://img.shields.io/github/size/Venerons/quantum/src/quantum.table.js?label=table&style=for-the-badge)
+![](https://img.shields.io/github/size/Venerons/quantum/src/quantum.crypto.js?label=crypto&style=for-the-badge)
+
 ## Usage
 
 For each library you need, add the script to your page:
