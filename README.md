@@ -42,8 +42,6 @@ if (Quantum.validate.email(my_email) {
 }
 ```
 
-[DOCUMENTATION](docs.md)
-
 ## Licensing
 
 Copyright (c) 2017 – 2023 Daniele Veneroni
