@@ -1,8 +1,4 @@
-// Quantum Table
-// Copyright (c) 2017 – 2022 Daniele Veneroni. All rights reserved.
-// Licensed under the MIT License (X11 License)
 (function () {
-
 	function QuantumTable(selector, settings) {
 		const q = this;
 		if (!(this instanceof QuantumTable)) {
