@@ -248,7 +248,7 @@ const string_to_base64 = (string) => {
 };
 
 // exports
-export {
+export default {
 	dec_to_hex,
 	hex_to_dec,
 
