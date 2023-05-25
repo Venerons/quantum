@@ -193,6 +193,12 @@ const hex_to_dec = (format, value) => {
 };
 
 // buffer
+const buffer_to_array = (buffer) => {
+	const output = [];
+	const view = new Uint8Array(buffer);
+	view.map((x) => output.push(x));
+	return output;
+};
 const buffer_to_hex = (buffer) => {
 	const array = new Uint8Array(buffer);
 	const output = [];
@@ -208,6 +214,24 @@ const buffer_to_string = (buffer, encoding) => {
 	return new TextDecoder(encoding || 'utf-8').decode(buffer);
 };
 
+// array
+const array_to_buffer = (array) => {
+	const output = new Uint8Array(array.length);
+	for (let i = 0; i < output.byteLength; ++i) {
+		output[i] = array[i];
+	}
+	return output.buffer;
+};
+const array_to_hex = (array) => {
+	return buffer_to_hex(array_to_buffer(array));
+};
+const array_to_base64 = (array) => {
+	return buffer_to_base64(array_to_buffer(array));
+};
+const array_to_string = (array) => {
+	return buffer_to_string(array_to_buffer(array));
+};
+
 // hex
 const hex_to_buffer = (hex) => {
 	const output = new Uint8Array(hex.length / 2);
@@ -216,8 +240,11 @@ const hex_to_buffer = (hex) => {
 	}
 	return output.buffer;
 };
+const hex_to_array = (hex) => {
+	return buffer_to_array(hex_to_buffer(hex));
+};
 const hex_to_base64 = (hex) => {
-	return string_to_base64(hex_to_string(hex));
+	return buffer_to_base64(hex_to_buffer(hex));
 };
 const hex_to_string = (hex) => {
 	return buffer_to_string(hex_to_buffer(hex));
@@ -226,6 +253,9 @@ const hex_to_string = (hex) => {
 // base64
 const base64_to_buffer = (base64) => {
 	return string_to_buffer(base64_to_string(base64));
+};
+const base64_to_array = (base64) => {
+	return string_to_array(base64_to_string(base64));
 };
 const base64_to_hex = (base64) => {
 	return string_to_hex(base64_to_string(base64));
@@ -238,6 +268,9 @@ const base64_to_string = (base64) => {
 // string
 const string_to_buffer = (string) => {
 	return new TextEncoder().encode(string).buffer;
+};
+const string_to_array = (string) => {
+	return buffer_to_array(string_to_buffer(string));
 };
 const string_to_hex = (string) => {
 	return buffer_to_hex(string_to_buffer(string));
@@ -252,19 +285,28 @@ export default {
 	dec_to_hex,
 	hex_to_dec,
 
+	buffer_to_array,
 	buffer_to_hex,
 	buffer_to_base64,
 	buffer_to_string,
 
+	array_to_buffer,
+	array_to_hex,
+	array_to_base64,
+	array_to_string,
+
 	hex_to_buffer,
+	hex_to_array,
 	hex_to_base64,
 	hex_to_string,
 
 	base64_to_buffer,
+	base64_to_array,
 	base64_to_hex,
 	base64_to_string,
 
 	string_to_buffer,
+	string_to_array,
 	string_to_hex,
 	string_to_base64
 };
