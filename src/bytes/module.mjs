@@ -234,6 +234,7 @@ const array_to_string = (array) => {
 
 // hex
 const hex_to_buffer = (hex) => {
+	hex = hex.replace(/^0x/, '');
 	const output = new Uint8Array(hex.length / 2);
 	for (let i = 0; i < output.byteLength; ++i) {
 		output[i] = parseInt(hex.substring(i * 2, i * 2 + 2), 16);
@@ -241,13 +242,13 @@ const hex_to_buffer = (hex) => {
 	return output.buffer;
 };
 const hex_to_array = (hex) => {
-	return buffer_to_array(hex_to_buffer(hex));
+	return buffer_to_array(hex_to_buffer(hex.replace(/^0x/, '')));
 };
 const hex_to_base64 = (hex) => {
-	return buffer_to_base64(hex_to_buffer(hex));
+	return buffer_to_base64(hex_to_buffer(hex.replace(/^0x/, '')));
 };
 const hex_to_string = (hex) => {
-	return buffer_to_string(hex_to_buffer(hex));
+	return buffer_to_string(hex_to_buffer(hex.replace(/^0x/, '')));
 };
 
 // base64
